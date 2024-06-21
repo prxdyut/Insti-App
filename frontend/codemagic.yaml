@@ -1,0 +1,37 @@
+workflows:
+  android-workflow-id:
+    name: Android Sample Workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      android_signing:
+        - android_institution_app_reference
+      vars:
+        PACKAGE_NAME: "com.institution.app"
+        GOOGLE_PLAY_TRACK: alpha
+      node: latest
+    scripts:
+      - name: Install npm dependencies for Ionic Capacitor project
+        script: |
+          npm install
+          npm run build
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Update dependencies and copy web assets to native project
+        script: |
+          npx cap sync android
+      - name: Build Android release
+        script: |
+          cd android
+          chmod 755 gradlew
+          ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - daspradyut516@gmail.com
+        notify:
+          success: true
+          failure: true

@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.framework7-root {
+  z-index: 0;
+}
+
+.toolbar-inner {
+  justify-content: space-around !important;
+}
+
+.fab {
+  bottom: 6rem !important;
+}
+
+.navbar,.bottombar {
+  transition: all 250ms;
+}
+
+.navbar.hide {
+  top: calc(0px - var(--f7-navbar-height) - var(--f7-safe-area-top));
+  transition-delay: 250ms;
+}
+
+.bottombar.hide {
+  bottom: calc(0px - var(--f7-toolbar-height) - var(--f7-safe-area-bottom));
+}
+
+.submitted .item-after span {
+  color: green;
+}
+.expired .item-after span {
+  color: red;
+}
+
+.pending .item-after span {
+  color: black;
+}
+.item-header {
+  text-transform: capitalize;
+}
+
+.media-item .item-link {
+  margin: 0 !important;
+  padding-inline: 8px;
+  border-radius: 0 !important;
+}
+
+.item-media img {
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
