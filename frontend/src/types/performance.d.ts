@@ -1,7 +1,5 @@
-import { Subject } from "src/utils/subjects";
-
 type ScoresPerformance = {
-  [key as Subject]: string;
+  [key as import("../utils/subjects").Subject]: string;
   month: string;
 };
 

@@ -3,6 +3,7 @@ import React from "react";
 import FormBuilder from "../../components/Form/Builder";
 import useFormHandler from "../../hooks/formHandler";
 import { useLoaderData } from "react-router-dom";
+ 
 
 export default function ScoresEdit() {
   const { users, allScore } = useLoaderData() as {

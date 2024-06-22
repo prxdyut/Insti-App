@@ -5,7 +5,6 @@ import useFormHandler from "../../hooks/formHandler";
 import { useLoaderData } from "react-router-dom";
 
 export default function AlertNew() {
-
   const formHandler = useFormHandler();
 
   return (

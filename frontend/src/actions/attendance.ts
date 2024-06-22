@@ -13,18 +13,3 @@ export async function attendanceNewAction({
   
   return { success: "yo" };
 }
-
-export async function attendanceEditAction({
-  request,
-  params,
-}: LoaderFunctionArgs): Promise<FormActionData> {
-  let formData = await request.formData();
-  const id = params?.id;
-  const title = formData.get("title") as string;
-  const subtitle = formData.get("subtitle") as string;
-  const description = formData.get("description") as string;
-  const files = getFiles(formData);
-  const button = getButton(formData);
-
-  return { success: "yo" };
-}

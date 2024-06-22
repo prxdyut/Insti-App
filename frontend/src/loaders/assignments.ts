@@ -4,18 +4,51 @@ import { authProvider } from "../providers/auth";
 import { ASSIGNMENT_SLUG } from "../utils/slugs";
 import { submissionsProvider } from "../providers/submissions";
 
-export const assignmentsHomeLoader = async () => {
+export const assignmentsHomeLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
+
   await assignmentsProvider.load({});
   await submissionsProvider.load({});
 
   return {
-    user: authProvider.getUser(),
+    user: await authProvider.getUser(args),
+    ...assignmentsProvider.data,
+    ...submissionsProvider.data,
+  };
+};
+
+export const assignmentsNewLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
+  await assignmentsProvider.load({});
+  await submissionsProvider.load({});
+
+  return {
+    user: await authProvider.getUser(args),
     ...assignmentsProvider.data,
     ...submissionsProvider.data,
   };
 };
 
 export const assignmentSingleLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await assignmentsProvider.load({});
   const id = args.params.id;
   const { assignments } = assignmentsProvider.data;
@@ -29,7 +62,7 @@ export const assignmentSingleLoader = async (args: LoaderFunctionArgs) => {
     );
 
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       assignment,
       submissions,
     };
@@ -38,7 +71,15 @@ export const assignmentSingleLoader = async (args: LoaderFunctionArgs) => {
     return redirect(`/${ASSIGNMENT_SLUG}?${searchParams.toString()}`);
   }
 };
+
 export const assignmentEditLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await assignmentsProvider.load({});
   const id = args.params.id;
   const { assignments } = assignmentsProvider.data;
@@ -47,7 +88,7 @@ export const assignmentEditLoader = async (args: LoaderFunctionArgs) => {
 
   if (assignment) {
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       assignment,
     };
   } else {
@@ -56,6 +97,13 @@ export const assignmentEditLoader = async (args: LoaderFunctionArgs) => {
   }
 };
 export const assignmentSubmitLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await submissionsProvider.load({});
   const id = args.params.id;
   const submissions = submissionsProvider.data.submissions.filter(
@@ -65,7 +113,7 @@ export const assignmentSubmitLoader = async (args: LoaderFunctionArgs) => {
 
   if (id) {
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       submissions,
     };
   } else {
@@ -75,6 +123,13 @@ export const assignmentSubmitLoader = async (args: LoaderFunctionArgs) => {
 };
 
 export const assignmentSubmissionLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await submissionsProvider.load({});
   const id = args.params.id;
   const submissions = submissionsProvider.data.submissions.filter(
@@ -84,7 +139,7 @@ export const assignmentSubmissionLoader = async (args: LoaderFunctionArgs) => {
 
   if (id) {
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       submissions,
     };
   } else {

@@ -4,15 +4,29 @@ import { SCORES_SLUG } from "../utils/slugs";
 import { LoaderFunctionArgs, redirect } from "react-router-dom";
 import { usersProvider } from "../providers/users";
 
-export const scoresHomeLoader = async () => {
+export const scoresHomeLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await scoresProvider.load({});
   return {
-    user: authProvider.getUser(),
+    user: await authProvider.getUser(args),
     ...scoresProvider.data,
   };
 };
 
 export const ScoresSingleLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await scoresProvider.load({});
   const id = args.params.id;
   const { scores } = scoresProvider.data;
@@ -21,7 +35,7 @@ export const ScoresSingleLoader = async (args: LoaderFunctionArgs) => {
 
   if (score) {
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       score,
     };
   } else {
@@ -30,15 +44,29 @@ export const ScoresSingleLoader = async (args: LoaderFunctionArgs) => {
   }
 };
 
-export const scoresNewLoader = async () => {
+export const scoresNewLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await usersProvider.load({});
   return {
-    user: authProvider.getUser(),
+    user: await authProvider.getUser(args),
     ...usersProvider.data,
   };
 };
 
 export const scoresEditLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
   await scoresProvider.load({});
   const id = args.params.id;
 
@@ -49,7 +77,7 @@ export const scoresEditLoader = async (args: LoaderFunctionArgs) => {
 
   if (id && allScore)
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       allScore,
       ...usersProvider.data,
     };

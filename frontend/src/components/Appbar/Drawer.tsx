@@ -1,6 +1,6 @@
 import { Box, Divider, SwipeableDrawer } from "@mui/material";
 import topBarStore from "../../stores/topBar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Page,
   Navbar,
@@ -10,6 +10,7 @@ import {
   Icon,
   Link,
   Button,
+  ListInput,
 } from "framework7-react";
 import { ProfileCard } from "../ui/ProfileCard";
 import {
@@ -45,6 +46,12 @@ import {
   TESTS_ICON,
 } from "../../utils/icons";
 import { useNavigate } from "react-router-dom";
+import { authProvider } from "../../providers/auth";
+ 
+import { Preferences } from "@capacitor/preferences";
+import { useUser } from "../../hooks/user";
+import { useLocalData } from "../../hooks/localData";
+import ClassSelector from "../Class/Selector";
 
 type Contents = {
   label: string;
@@ -53,6 +60,8 @@ type Contents = {
 };
 
 export default () => {
+  const user = useUser();
+
   const topContents: Contents[] = [
     {
       label: "Alerts",
@@ -121,13 +130,13 @@ export default () => {
   const closeDrawer = topBarStore((state) => state.close);
 
   const navigate = (href: string) => {
-    closeDrawer()
+    closeDrawer();
     navigateTo(href);
-  }
+  };
 
   const ProfileCardProps = {
     avatar: {
-      initial: "P",
+      initial: user?.firstName.substring(0, 1),
     },
     action: {
       cb() {
@@ -135,11 +144,10 @@ export default () => {
       },
       icon: <Link iconF7="ellipsis_vertical" iconSize={20} />,
     },
-    title: "Pradyut",
-    subtitle: "Student",
+    title: `${user?.firstName} ${user?.lastName}`,
+    subtitle: user?.role,
     media: "https://picsum.photos/900/1600",
   };
-  
   return (
     <SwipeableDrawer
       anchor={"left"}
@@ -155,9 +163,11 @@ export default () => {
           flexFlow: "column",
         }}
       >
-        <ProfileCard {...ProfileCardProps} />
+        {/* <ProfileCard {...ProfileCardProps} />
+        <ClassSelector /> */}
+        <div className=" p-4 font-bold text-2xl">My App</div>
         <div style={{ flex: 1, overflow: "scroll" }}>
-          <List strongIos>
+          <List strongIos style={{ margin: 0 }}>
             {topContents.map((content, i) => (
               <React.Fragment key={i}>
                 <ListItem
@@ -191,7 +201,7 @@ export default () => {
                   link={content.href}
                   onClick={() => navigate(content.href)}
                 >
-                <Icon slot="media" material={content.icon} />
+                  <Icon slot="media" material={content.icon} />
                 </ListItem>
               </React.Fragment>
             ))}
@@ -200,7 +210,7 @@ export default () => {
         <Button
           color="red"
           style={{ padding: "1.6rem" }}
-          onClick={() => navigateTo("/login")}
+          onClick={() => navigateTo("/signout")}
         >
           Log Out
         </Button>

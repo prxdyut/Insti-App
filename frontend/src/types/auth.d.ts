@@ -1,21 +1,22 @@
 type User = {
-  userId: string ;
+  userId: string;
   firstName: string;
-  lastName:string;
+  lastName: string;
   phoneNumber: string;
   meta: {
-    [key: string]: string
+    [key: string]: string;
   };
+  role: "admin" | "student" | "tutor";
   token: string;
-}
+};
 
 type AuthProvider = {
   initial: boolean;
   isAuthenticated: boolean;
-  userId?: User["userId"];
-  token?: User["token"];
+  user: User | {};
   signin(userId: string, password: string): Promise<void>;
-  signout(): Promise<void>;
+  signout(): Promise<any>;
   init(): Promise<void>;
-  getUser(): Promise<UserRef>;
-}
+  getUser(args: import("react-router-dom").LoaderFunctionArgs): Promise<User>;
+  checkAuth(args: import("react-router-dom").LoaderFunctionArgs): Promise<any>;
+};

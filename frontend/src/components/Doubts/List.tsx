@@ -2,6 +2,7 @@ import { format, parseISO } from "date-fns";
 import {
   Block,
   BlockTitle,
+  Button,
   Icon,
   List,
   ListItem,
@@ -19,10 +20,11 @@ import { DOUBTS_SLUG } from "../../utils/slugs";
 import { htmlToText } from "../../routes/Doubts/helpers";
 
 export default function DoubtsList({ doubts }: { doubts: DoubtsRef[] }) {
-  const navigateTo = useNavigate()
+  const navigateTo = useNavigate();
 
   return (
     <Block className=" no-padding">
+      
       <List dividersIos mediaList outlineIos strongIos>
         {doubts.map(
           ({ title, respondants, subject, by, description, cover, uid }, i) => (

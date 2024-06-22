@@ -3,9 +3,10 @@ import React from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import AttachmentFiles from "../../components/Attachment/Files";
 import { format } from "date-fns";
+import ConditionalButton from "../../components/Admin/Button";
 
 export default function AlertsSingle() {
-  const { alert } = useLoaderData() as { alert: Alert };
+  const { alert, user } = useLoaderData() as { alert: Alert; user: User };
   const navigateTo = useNavigate();
 
   return (
@@ -21,6 +22,15 @@ export default function AlertsSingle() {
           `}
       </style>
       <Block>
+        <div className=" flex">
+          <ConditionalButton
+            user={user}
+            className="mb-4"
+            label="Edit"
+            navigate="./edit"
+            buttonProps={{ small: true }}
+          />
+        </div>
         <div className=" text-xl font-semibold mb-4">{alert.title}</div>
         <div className=" text-xs mb-1">
           {format(alert.date, "dd MMM, yyyy")}

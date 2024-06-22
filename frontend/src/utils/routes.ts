@@ -1,145 +1,47 @@
 import {
-  LoaderFunctionArgs,
   RouteObject,
   createBrowserRouter,
 } from "react-router-dom";
-import MAIN from "../routes/page";
-import {
-  ASSIGNMENT_SLUG,
-  ALERT_SLUG,
-  SCHEDULE_SLUG,
-  SCORES_SLUG,
-  DOUBTS_SLUG,
-  ATTENDANCE_SLUG,
-  ACCOUNT_SLUG,
-  SETTINGS_SLUG,
-  REPORT_SLUG,
-  LOGIN_SLUG,
-  RESET_SLUG,
-  PERFORMANCE_SLUG,
-  RESOURCES_SLUG,
-} from "./slugs";
-import { loginAction } from "../actions/login";
-import { loginLoader } from "../loaders/login";
-import LoginPage from "../routes/LoginPage";
-import { authProvider } from "../providers/auth";
-import Layout from "../routes/Layout";
-import AssignmentsHomepage from "../routes/Assignments/home";
-import AlertsHome from "../routes/Alerts/Home";
-import ScheduleHome from "../routes/Schedule/Home";
-import ScoresHome from "../routes/Scores/Home";
-import DoubtsHome from "../routes/Doubts/Home";
-import AttendanceHome from "../routes/Attendance/Home";
-import ChartsPerformance from "../routes/Performance/Home";
-import ResourcesList from "../routes/Resources/Home";
-import ProfileArea from "../routes/Profile/Home";
-import SettingsArea from "../routes/Settings/Home";
-import ReportForm from "../routes/Report/Home";
-import {
-  assignmentEditLoader,
-  assignmentSingleLoader,
-  assignmentSubmissionLoader,
-  assignmentSubmitLoader,
-  assignmentsHomeLoader,
-} from "../loaders/assignments";
-import {
-  alertsEditLoader,
-  alertsHomeLoader,
-  alertsSingleLoader,
-} from "../loaders/alerts";
-import {
-  attendancesHomeLoader,
-  attendancesNewLoader,
-} from "../loaders/attendance";
-import { doubtsHome, doubtsSingle } from "../loaders/doubts";
-import { performanceHome } from "../loaders/performance";
-import { profileEditLoader, profileHomeLoader } from "../loaders/profile";
-import { resourceEditLoader, resourcesHomeLoader } from "../loaders/resources";
-import {
-  scheduleEditLoader,
-  scheduleHome,
-  scheduleNewLoader,
-} from "../loaders/schedule";
-import {
-  ScoresSingleLoader,
-  scoresEditLoader,
-  scoresHomeLoader,
-  scoresNewLoader,
-} from "../loaders/scores";
-import AlertsSingle from "../routes/Alerts/Single";
-import AssignmentsSingle from "../routes/Assignments/single";
-import DoubtsSingle from "../routes/Doubts/Single";
-import ScoreSingle from "../routes/Scores/Single";
-import AssignmentSubmission from "../routes/Assignments/submissions";
-import AssignmentNew from "../routes/Assignments/new";
-import {
-  assignmentEditAction,
-  assignmentNewAction,
-  assignmentSubmissionAction,
-  assignmentSubmitAction,
-} from "../actions/assignments";
-import AssignmentEdit from "../routes/Assignments/edit";
-import AlertNew from "../routes/Alerts/new";
-import { alertEditAction, alertNewAction } from "../actions/alerts";
-import AlertEdit from "../routes/Alerts/edit";
-import ScheduleNew from "../routes/Schedule/new";
-import { scheduleEditAction, scheduleNewAction } from "../actions/schedule";
-import ScheduleEdit from "../routes/Schedule/edit";
-import ScoresNew from "../routes/Scores/new";
-import { scoresEditAction, scoresNewAction } from "../actions/scores";
-import ScoresEdit from "../routes/Scores/edit";
-import DoubtsNew from "../routes/Doubts/new";
-import { doubtNewAction, doubtReplyAction } from "../actions/doubts";
-import ResourceNew from "../routes/Resources/new";
-import { resourceEditAction, resourceNewAction } from "../actions/resource";
-import ResourceEdit from "../routes/Resources/edit";
-import AttendanceNew from "../routes/Attendance/new";
-import { attendanceNewAction } from "../actions/attendance";
-import ProfileEdit from "../routes/Profile/edit";
-import { profileEditAction, profileNewAction } from "../actions/profile";
-import ProfileNew from "../routes/Profile/new";
-import AssignmentSubmit from "../routes/Assignments/submit";
 
-type CustomRouteObject = RouteObject & {
-  access?: Array<"student" | "tutor" | "admin">;
-  noUI?: boolean;
-  ui?: UI | boolean;
-};
+import * as slugs from "./slugs";
+import * as loaders from "./loaders";
+import * as components from "./components";
+import * as actions from "./actions";
 
 const createRoutes = (routes: Array<CustomRouteObject>) => routes;
 
 const SUBMISSION_ROUTES = createRoutes([
   {
-    path: `${ASSIGNMENT_SLUG}/:id/submit`,
-    Component: AssignmentSubmit,
-    loader: assignmentSubmitLoader,
-    action: assignmentSubmitAction,
+    path: `/${slugs.ASSIGNMENT_SLUG}/:id/submit`,
+    Component: components.AssignmentSubmit,
+    loader: loaders.assignmentSubmitLoader,
+    action: actions.assignmentSubmitAction,
     access: ["student", "tutor", "admin"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
   {
-    path: `${ASSIGNMENT_SLUG}/:id/submissions`,
-    Component: AssignmentSubmission,
-    loader: assignmentSubmissionLoader,
-    action: assignmentSubmissionAction,
-    access: ["student", "tutor", "admin"],
+    path: `/${slugs.ASSIGNMENT_SLUG}/:id/submissions`,
+    Component: components.AssignmentSubmission,
+    loader: loaders.assignmentSubmissionLoader,
+    action: actions.assignmentSubmissionAction,
+    access: ["tutor", "admin"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
 ]);
 
 const ASSIGNMENT_ROUTES = createRoutes([
   {
-    path: ASSIGNMENT_SLUG,
-    Component: AssignmentsHomepage,
-    loader: assignmentsHomeLoader,
+    path: `/${slugs.ASSIGNMENT_SLUG}`,
+    Component: components.AssignmentsHomepage,
+    loader: loaders.assignmentsHomeLoader,
     access: ["student", "tutor", "admin"],
     ui: {
       backBar: false,
@@ -148,9 +50,10 @@ const ASSIGNMENT_ROUTES = createRoutes([
     },
   },
   {
-    path: `${ASSIGNMENT_SLUG}/new`,
-    Component: AssignmentNew,
-    action: assignmentNewAction,
+    path: `/${slugs.ASSIGNMENT_SLUG}/new`,
+    Component: components.AssignmentNew,
+    loader: loaders.assignmentsNewLoader,
+    action: actions.assignmentNewAction,
     access: ["tutor", "admin"],
     ui: {
       backBar: true,
@@ -159,35 +62,35 @@ const ASSIGNMENT_ROUTES = createRoutes([
     },
   },
   {
-    path: `${ASSIGNMENT_SLUG}/:id`,
-    Component: AssignmentsSingle,
-    loader: assignmentSingleLoader,
+    path: `/${slugs.ASSIGNMENT_SLUG}/:id`,
+    Component: components.AssignmentsSingle,
+    loader: loaders.assignmentSingleLoader,
     access: ["student", "tutor", "admin"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
   {
-    path: `${ASSIGNMENT_SLUG}/:id/edit`,
-    Component: AssignmentEdit,
-    loader: assignmentEditLoader,
-    action: assignmentEditAction,
+    path: `/${slugs.ASSIGNMENT_SLUG}/:id/edit`,
+    Component: components.AssignmentEdit,
+    loader: loaders.assignmentEditLoader,
+    action: actions.assignmentEditAction,
     access: ["tutor", "admin"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
 ]);
 
 const ALERT_ROUTES = createRoutes([
   {
-    path: ALERT_SLUG,
-    Component: AlertsHome,
-    loader: alertsHomeLoader,
+    path: `/${slugs.ALERT_SLUG}`,
+    Component: components.AlertsHome,
+    loader: loaders.alertsHomeLoader,
     access: ["student", "tutor", "admin"],
     ui: {
       backBar: false,
@@ -196,9 +99,10 @@ const ALERT_ROUTES = createRoutes([
     },
   },
   {
-    path: `${ALERT_SLUG}/new`,
-    Component: AlertNew,
-    action: alertNewAction,
+    path: `/${slugs.ALERT_SLUG}/new`,
+    Component: components.AlertNew,
+    loader: loaders.alertNewLoader,
+    action: actions.alertNewAction,
     access: ["tutor", "admin"],
     ui: {
       backBar: true,
@@ -207,35 +111,35 @@ const ALERT_ROUTES = createRoutes([
     },
   },
   {
-    path: `${ALERT_SLUG}/:id`,
-    Component: AlertsSingle,
-    loader: alertsSingleLoader,
+    path: `/${slugs.ALERT_SLUG}/:id`,
+    Component: components.AlertsSingle,
+    loader: loaders.alertsSingleLoader,
     access: ["student", "tutor", "admin"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
   {
-    path: `${ALERT_SLUG}/:id/edit`,
-    Component: AlertEdit,
-    loader: alertsEditLoader,
-    action: alertEditAction,
+    path: `/${slugs.ALERT_SLUG}/:id/edit`,
+    Component: components.AlertEdit,
+    loader: loaders.alertsEditLoader,
+    action: actions.alertEditAction,
     access: ["student", "tutor", "admin"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
 ]);
 
 const SCHEDULE_ROUTES = createRoutes([
   {
-    path: SCHEDULE_SLUG,
-    Component: ScheduleHome,
-    loader: scheduleHome,
+    path: `/${slugs.SCHEDULE_SLUG}`,
+    Component: components.ScheduleHome,
+    loader: loaders.scheduleHome,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: false,
@@ -244,10 +148,10 @@ const SCHEDULE_ROUTES = createRoutes([
     },
   },
   {
-    path: `${SCHEDULE_SLUG}/edit`,
-    Component: ScheduleEdit,
-    loader: scheduleEditLoader,
-    action: scheduleEditAction,
+    path: `/${slugs.SCHEDULE_SLUG}/edit`,
+    Component: components.ScheduleEdit,
+    loader: loaders.scheduleEditLoader,
+    action: actions.scheduleEditAction,
     access: ["tutor", "admin"],
     ui: {
       backBar: true,
@@ -256,10 +160,10 @@ const SCHEDULE_ROUTES = createRoutes([
     },
   },
   {
-    path: `${SCHEDULE_SLUG}/new`,
-    Component: ScheduleNew,
-    loader: scheduleNewLoader,
-    action: scheduleNewAction,
+    path: `/${slugs.SCHEDULE_SLUG}/new`,
+    Component: components.ScheduleNew,
+    loader: loaders.scheduleNewLoader,
+    action: actions.scheduleNewAction,
     access: ["tutor", "admin"],
     ui: {
       backBar: true,
@@ -271,9 +175,9 @@ const SCHEDULE_ROUTES = createRoutes([
 
 const SCORES_ROUTES = createRoutes([
   {
-    path: SCORES_SLUG,
-    Component: ScoresHome,
-    loader: scoresHomeLoader,
+    path: `/${slugs.SCORES_SLUG}`,
+    Component: components.ScoresHome,
+    loader: loaders.scoresHomeLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: false,
@@ -282,10 +186,10 @@ const SCORES_ROUTES = createRoutes([
     },
   },
   {
-    path: `${SCORES_SLUG}/new`,
-    Component: ScoresNew,
-    loader: scoresNewLoader,
-    action: scoresNewAction,
+    path: `/${slugs.SCORES_SLUG}/new`,
+    Component: components.ScoresNew,
+    loader: loaders.scoresNewLoader,
+    action: actions.scoresNewAction,
     access: ["admin", "tutor"],
     ui: {
       backBar: true,
@@ -294,35 +198,35 @@ const SCORES_ROUTES = createRoutes([
     },
   },
   {
-    path: `${SCORES_SLUG}/:id`,
-    Component: ScoreSingle,
-    loader: ScoresSingleLoader,
+    path: `/${slugs.SCORES_SLUG}/:id`,
+    Component: components.ScoreSingle,
+    loader: loaders.ScoresSingleLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
   {
-    path: `${SCORES_SLUG}/:id/edit`,
-    Component: ScoresEdit,
-    action: scoresEditAction,
-    loader: scoresEditLoader,
+    path: `/${slugs.SCORES_SLUG}/:id/edit`,
+    Component: components.ScoresEdit,
+    action: actions.scoresEditAction,
+    loader: loaders.scoresEditLoader,
     access: ["admin", "tutor"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
 ]);
 
 const DOUBTS_ROUTES = createRoutes([
   {
-    path: DOUBTS_SLUG,
-    Component: DoubtsHome,
-    loader: doubtsHome,
+    path: `/${slugs.DOUBTS_SLUG}`,
+    Component: components.DoubtsHome,
+    loader: loaders.doubtsHomeLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: false,
@@ -331,30 +235,31 @@ const DOUBTS_ROUTES = createRoutes([
     },
   },
   {
-    path: `${DOUBTS_SLUG}/new`,
-    Component: DoubtsNew,
-    action: doubtNewAction,
+    path: `/${slugs.DOUBTS_SLUG}/new`,
+    Component: components.DoubtsNew,
+    action: actions.doubtNewAction,
+    loader: loaders.doubtsNewLoader,
     access: ["admin", "student", "tutor"],
   },
   {
-    path: `${DOUBTS_SLUG}/:id`,
-    Component: DoubtsSingle,
-    loader: doubtsSingle,
-    action: doubtReplyAction,
+    path: `/${slugs.DOUBTS_SLUG}/:id`,
+    Component: components.DoubtsSingle,
+    loader: loaders.doubtsSingleLoader,
+    action: actions.doubtReplyAction,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
 ]);
 
 const ATTENDANCE_ROUTES = createRoutes([
   {
-    path: ATTENDANCE_SLUG,
-    Component: AttendanceHome,
-    loader: attendancesHomeLoader,
+    path: `/${slugs.ATTENDANCE_SLUG}`,
+    Component: components.AttendanceHome,
+    loader: loaders.attendancesHomeLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: false,
@@ -363,10 +268,10 @@ const ATTENDANCE_ROUTES = createRoutes([
     },
   },
   {
-    path: `${ATTENDANCE_SLUG}/new`,
-    Component: AttendanceNew,
-    loader: attendancesNewLoader,
-    action: attendanceNewAction,
+    path: `/${slugs.ATTENDANCE_SLUG}/new`,
+    Component: components.AttendanceNew,
+    loader: loaders.attendancesNewLoader,
+    action: actions.attendanceNewAction,
     access: ["student", "tutor"],
     ui: {
       backBar: true,
@@ -378,9 +283,9 @@ const ATTENDANCE_ROUTES = createRoutes([
 
 const ACCOUNT_ROUTES = createRoutes([
   {
-    path: ACCOUNT_SLUG,
-    Component: ProfileArea,
-    loader: profileHomeLoader,
+    path: `/${slugs.ACCOUNT_SLUG}`,
+    Component: components.ProfileArea,
+    loader: loaders.profileHomeLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: true,
@@ -389,10 +294,10 @@ const ACCOUNT_ROUTES = createRoutes([
     },
   },
   {
-    path: `${ACCOUNT_SLUG}/edit`,
-    Component: ProfileEdit,
-    loader: profileEditLoader,
-    action: profileEditAction,
+    path: `/${slugs.ACCOUNT_SLUG}/edit`,
+    Component: components.ProfileEdit,
+    loader: loaders.profileEditLoader,
+    action: actions.profileEditAction,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: true,
@@ -401,9 +306,10 @@ const ACCOUNT_ROUTES = createRoutes([
     },
   },
   {
-    path: `${ACCOUNT_SLUG}/new`,
-    Component: ProfileNew,
-    action: profileNewAction,
+    path: `/${slugs.ACCOUNT_SLUG}/new`,
+    Component: components.ProfileNew,
+    loader: loaders.profileNewLoader,
+    action: actions.profileNewAction,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: true,
@@ -415,8 +321,9 @@ const ACCOUNT_ROUTES = createRoutes([
 
 const OTHER_ROUTES = createRoutes([
   {
-    path: `${SETTINGS_SLUG}`,
-    Component: SettingsArea,
+    path: `/${slugs.SETTINGS_SLUG}`,
+    Component: components.SettingsArea,
+    loader: loaders.authLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: true,
@@ -425,8 +332,9 @@ const OTHER_ROUTES = createRoutes([
     },
   },
   {
-    path: `${REPORT_SLUG}`,
-    Component: ReportForm,
+    path: `/${slugs.REPORT_SLUG}`,
+    Component: components.ReportForm,
+    loader: loaders.authLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       backBar: true,
@@ -438,54 +346,59 @@ const OTHER_ROUTES = createRoutes([
 
 const AUTHENTICATION_ROUTES = createRoutes([
   {
-    path: `${LOGIN_SLUG}`,
-    action: loginAction,
-    loader: loginLoader,
-    Component: LoginPage,
+    path: `/${slugs.LOGIN_SLUG}`,
+    action: actions.loginAction,
+    Component: components.LoginPage,
     access: ["admin", "student", "tutor"],
     ui: false,
   },
   {
-    path: `${RESET_SLUG}`,
+    path: `/${slugs.RESET_SLUG}`,
     Component: null,
     access: ["admin", "student", "tutor"],
     ui: false,
   },
   {
-    path: `${RESET_SLUG}/new`,
+    path: `/${slugs.RESET_SLUG}/new`,
     Component: null,
     access: ["admin", "student", "tutor"],
     ui: false,
+  },
+  {
+    path: `signout`,
+    loader: loaders.signoutLoader,
+    Component: null,
+    access: ["admin", "tutor", "student"],
   },
 ]);
 
 const PERFORMANCE_ROUTES = createRoutes([
   {
-    path: `${PERFORMANCE_SLUG}`,
-    Component: ChartsPerformance,
-    loader: performanceHome,
+    path: `/${slugs.PERFORMANCE_SLUG}`,
+    Component: components.ChartsPerformance,
+    loader: loaders.performanceHome,
     access: ["student", "admin"],
     ui: {
       heading: "Performance",
     },
   },
-  { path: `${PERFORMANCE_SLUG}/all`, Component: null, access: ["admin"] },
 ]);
 
 const RESOURCES_ROUTES = createRoutes([
   {
-    path: RESOURCES_SLUG,
-    Component: ResourcesList,
-    loader: resourcesHomeLoader,
+    path: `/${slugs.RESOURCES_SLUG}`,
+    Component: components.ResourcesList,
+    loader: loaders.resourcesHomeLoader,
     access: ["admin", "student", "tutor"],
     ui: {
       heading: "Resources",
     },
   },
   {
-    path: `${RESOURCES_SLUG}/new`,
-    Component: ResourceNew,
-    action: resourceNewAction,
+    path: `/${slugs.RESOURCES_SLUG}/new`,
+    Component: components.ResourceNew,
+    loader: loaders.resourcesNewLoader,
+    action: actions.resourceNewAction,
     access: ["admin", "tutor"],
     ui: {
       backBar: true,
@@ -494,20 +407,20 @@ const RESOURCES_ROUTES = createRoutes([
     },
   },
   {
-    path: `${RESOURCES_SLUG}/:id/edit`,
-    Component: ResourceEdit,
-    loader: resourceEditLoader,
-    action: resourceEditAction,
+    path: `/${slugs.RESOURCES_SLUG}/:id/edit`,
+    Component: components.ResourceEdit,
+    loader: loaders.resourceEditLoader,
+    action: actions.resourceEditAction,
     access: ["admin", "tutor"],
     ui: {
       backBar: true,
       bottomBar: false,
-      heading: "#{id}",
+      heading: `#{id}`,
     },
   },
 ]);
 
-export const allRoutes: CustomRouteObject[] = [
+export const allRoutes = [
   ...ASSIGNMENT_ROUTES,
   ...SUBMISSION_ROUTES,
   ...ALERT_ROUTES,
@@ -522,29 +435,13 @@ export const allRoutes: CustomRouteObject[] = [
   ...AUTHENTICATION_ROUTES,
   {
     index: true,
-    Component: MAIN,
-    action: async ({ request }: LoaderFunctionArgs) => {
-      let formData = await request.formData();
-
-      await new Promise((r) => setTimeout(r, 2000));
-
-      return {
-        error: "Error",
-        // redirect: "/assignments",
-      };
-    },
-    ui: {
-      topBar: true,
-      heading: "My App",
-    },
+    Component: components.MAIN,
   },
-];
+]
 
 const routes: RouteObject[] = [
   {
-    path: "/",
-    loader: authProvider.getUser,
-    Component: Layout,
+    Component: components.Layout,
     children: allRoutes,
   },
 ];

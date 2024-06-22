@@ -1,21 +1,20 @@
-interface AuthenticateArguments {
-  userId: string;
-  password: string;
-}
-
-type checkUserAndAssignToken = ApiRes<UserRef>;
+import { user1, user2 } from "../data/users";
+ 
 
 export async function checkUserAndAssignToken({
   userId,
   password,
-}: AuthenticateArguments): Promise<checkUserAndAssignToken> {
-  // check if credentials match
-  
-  return {
-    res: {
-      userId: "pradyut",
-      token: "kbsOFzGrCeiw4yNPjNO1HmseTjlRK/lTM/z3N4NeN7o=",
-    },
-    error: false,
-  };
+}: {
+  userId: string;
+  password: string;
+}): Promise<User> {
+  if (userId == "student" && password == "student") return user2;
+  if (userId == "tutor" && password == "tutor") return user1;
+  throw "Invalid Credentials";
+}
+
+export async function verifyToken(user: User) {
+  // token verification logic
+  if (user?.token) return true;
+  return false;
 }

@@ -23,6 +23,7 @@ import {
 import { format } from "date-fns";
 import subjects from "../../utils/subjects";
 import { Form } from "react-router-dom";
+import { useLocalData } from "../../hooks/localData";
 
 export default function FormBuilder({
   structure,
@@ -31,6 +32,8 @@ export default function FormBuilder({
   structure: FormBuilder[];
   submit: string;
 }) {
+  const { localData } = useLocalData();
+
   return (
     <div className=" no-padding formBuilder" key={structure.length}>
       <style>{`
@@ -92,6 +95,9 @@ export default function FormBuilder({
               return <input {...input} />;
           }
         })}
+        <input type="hidden" name="class" value={localData?.class} />
+
+        {/* {_} edits needed {_} */}
         <div className=" flex justify-end mx-4 gap-2">
           <Button type="reset" className=" w-min" outline>
             Reset
@@ -129,7 +135,7 @@ function TextEdit(props: {
 function Options(props: {
   placeholder: string;
   label: string;
-  options: {value: string, label: string}[];
+  options: { value: string; label: string }[];
 }) {
   return (
     <List className=" capitalize">
@@ -151,7 +157,7 @@ function ButtonEditor(props: {
   linkLabel: string;
   linkValue?: string;
 }) {
-  const [button, setButton] = useState({ label: "", url: "" });
+  const [button, setButton] = useState({ label: props.labelValue, url: props.linkValue });
 
   return (
     <div className=" mx-4 my-3 border-2 rounded-lg buttonEditor">

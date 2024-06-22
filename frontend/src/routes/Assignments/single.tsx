@@ -9,15 +9,15 @@ import {
 import AttachmentFiles from "../../components/Attachment/Files";
 import { format } from "date-fns";
 import subjects from "../../utils/subjects";
+import ConditionalButton from "../../components/Admin/Button";
 
 export default function AssignmentsSingle() {
-  const { assignment, submissions } = useLoaderData() as {
+  const { assignment, submissions, user } = useLoaderData() as {
     assignment: Assignment;
     submissions: Submission[];
+    user: User;
   };
 
-  console.log(submissions)
-  
   const navigateTo = useNavigate();
   const location = useLocation();
 
@@ -38,6 +38,15 @@ export default function AssignmentsSingle() {
           `}
       </style>
       <Block>
+      <div className=" flex">
+          <ConditionalButton
+            user={user}
+            className="mb-4"
+            label="Edit"
+            navigate="./edit"
+            buttonProps={{ small: true }}
+          />
+        </div>
         <div className=" text-xl font-semibold mb-4">{assignment.title}</div>
         <div className=" text-sm mb-1">
           <span>{format(assignment.date.start, "dd MMM, yyyy")}</span>
@@ -58,13 +67,20 @@ export default function AssignmentsSingle() {
           className=" mb-2"
           files={assignment.files}
         />
-        <Button
-          fill
-          large
-          onClick={() => navigateTo(location.pathname + "/submit")}
-        >
-          {submissions.length ? "Submissions" : "Submit"}
-        </Button>
+        <ConditionalButton
+          student
+          buttonProps={{large: true}}
+          user={user}
+          className="mt-2 -mb-5"
+          label="Submit"
+          navigate="./submit"
+        />
+        <ConditionalButton
+          user={user}
+          className="mt-2 -mb-5"
+          label="All Submissions"
+          navigate="./submissions"
+        />
       </Block>
     </Page>
   );

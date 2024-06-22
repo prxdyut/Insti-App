@@ -16,11 +16,14 @@ import { colorState, formatDays } from "../../routes/Assignments/helpers";
 import subjects from "../../utils/subjects";
 import { MATHS_ASSIGNMENT } from "../../utils/icons";
 import { ASSIGNMENT_SLUG } from "../../utils/slugs";
+import ConditionalButton from "../Admin/Button";
 
 export default function AssignmentsList({
+  user,
   assignments,
-  submissions
+  submissions,
 }: {
+  user: User;
   assignments: AssignmentRef[];
   submissions: Submission[];
 }) {
@@ -28,9 +31,12 @@ export default function AssignmentsList({
 
   return (
     <Block className=" no-padding">
+      
       <List dividersIos mediaList outlineIos strongIos>
         {assignments.map(({ subject, title, by, date, uid }, i) => {
-          const current_submissions = submissions.filter(_ => _.assignmentId == uid)
+          const current_submissions = submissions.filter(
+            (_) => _.assignmentId == uid
+          );
           return (
             <ListItem
               key={i}

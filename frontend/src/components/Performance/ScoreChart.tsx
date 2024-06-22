@@ -1,36 +1,15 @@
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Block, BlockTitle, List, ListInput, Page, f7 } from "framework7-react";
-import { PieChart } from "@mui/x-charts/PieChart";
-import {
-  GaugeContainer,
-  GaugeValueArc,
-  GaugeReferenceArc,
-  useGaugeState,
-} from "@mui/x-charts/Gauge";
-import { LineChart } from "@mui/x-charts/LineChart";
-import { Box, Stack } from "@mui/material";
-import {
-  getPerformanceSubject,
-  setPerformanceSubject,
-} from "../../events/performanceSubjectSelector";
+import { Block, BlockTitle } from "framework7-react";
+import { Box } from "@mui/material";
+import { getPerformanceSubject } from "../../events/performanceSubjectSelector";
 import { valueFormatter } from "../../routes/Performance/helpers";
-import GaugePointer from "../../components/Gauge/Pointer";
-import SubjectSelector from "./SubjectSelector";
 
 export default function ScoreChart({
   scores,
 }: {
   scores: ScoresPerformanceRef[];
 }) {
-  const [subject, setSubject] = React.useState("");
-  getPerformanceSubject((value: string) => setSubject(value));
-
-  const subjectSelected = !(subject[0] == "overview" || !subject);
-
-  const dataset = subjectSelected
-    ? scores.map((score) => ({ [subject]: score[subject] }))
-    : scores;
 
   const series = [
     { dataKey: "english", label: "English", valueFormatter },
@@ -49,7 +28,7 @@ export default function ScoreChart({
       <Block className="no-padding overflow-auto">
         <Box className="">
           <BarChart
-            dataset={dataset}
+            dataset={scores}
             xAxis={[{ scaleType: "band", dataKey: "month" }]}
             width={3000}
             height={250}

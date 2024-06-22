@@ -1,56 +1,72 @@
 import { del, get, set, update } from "idb-keyval";
-import { checkUserAndAssignToken } from "../apis/auth";
+import { checkUserAndAssignToken, verifyToken } from "../apis/auth";
 import { wait } from "../utils/functions";
 import { Preferences } from "@capacitor/preferences";
+import {
+  LoaderFunctionArgs,
+  matchPath,
+  matchRoutes,
+  redirect,
+} from "react-router-dom";
+import { allRoutes } from "../utils/routes";
 
 export const authProvider: AuthProvider = {
   initial: true,
   isAuthenticated: false,
-  userId: undefined,
-  token: undefined,
+  user: {},
   async signin(userId: string, password: string) {
     await wait(2000, null);
-    const { res } = await checkUserAndAssignToken({
+    const user = await checkUserAndAssignToken({
       userId,
       password,
     });
-    authProvider.userId = userId;
-    authProvider.isAuthenticated = true;
-    authProvider.token = res?.token as string;
-    await Preferences.set({
-      key: "userId",
-      value: userId,
-    });
-    await Preferences.set({
-      key: "isAuthenticated",
-      value: "true",
-    });
-    await Preferences.set({
-      key: "token",
-      value: res?.token as string,
-    });
+    if (user.userId) {
+      authProvider.isAuthenticated = true;
+      authProvider.user = user;
+      authProvider.initial = false;
+      await Preferences.set({
+        key: "user",
+        value: JSON.stringify(user),
+      });
+      await Preferences.set({
+        key: "isAuthenticated",
+        value: "true",
+      });
+    }
   },
   async signout() {
-    authProvider.isAuthenticated = true;
-    authProvider.userId = "";
-    await Preferences.remove({ key: "userId" });
+    authProvider.isAuthenticated = false;
+    authProvider.user = {};
+    await Preferences.remove({ key: "user" });
     await Preferences.remove({ key: "isAuthenticated" });
+    return redirect("/login");
   },
   async init() {
     if (authProvider.initial) {
-      const { value: userId } = await Preferences.get({ key: "userId" });
-      const { value: token } = await Preferences.get({ key: "token" });
-      authProvider.userId = userId as string;
+      const { value: userStr } = await Preferences.get({ key: "user" });
+      const user = JSON.parse(userStr as string);
+      const isVerifiedToken = await verifyToken(user);
+      if (isVerifiedToken) {
+        authProvider.user = user;
+        authProvider.isAuthenticated = true;
+      }
       authProvider.initial = false;
-      authProvider.token = token as string;
-      if (userId && token) authProvider.isAuthenticated = true;
     }
   },
-  async getUser() {
+  async getUser(args: LoaderFunctionArgs): Promise<User> {
     await authProvider.init();
-    return {
-      userId: authProvider.userId,
-      token: authProvider.token,
-    };
+    return authProvider.user as User;
+  },
+  async checkAuth(args: LoaderFunctionArgs): Promise<any> {
+    await authProvider.init();
+
+    if (!authProvider.isAuthenticated) throw "unauthorised-access";
+
+    const location = new URL(args.request.url);
+    // @ts-ignore
+    const access = matchRoutes(allRoutes, location.pathname)[0]?.route.access;
+    const role = (authProvider.user as User).role;
+    const isAppropriate = access?.includes(role);
+    if (!isAppropriate) throw "no-access";
   },
 };

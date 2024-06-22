@@ -16,29 +16,30 @@ import {
   f7,
   Block,
   Button,
+  f7ready,
 } from "framework7-react";
-import useGetSearchParam from "../hooks/getSearchParam";
-import useFormLoadingState from "../hooks/formLoadingState";
-import useFormActionData from "../hooks/formActionData";
+import useGetSearchParam from "../../hooks/getSearchParam";
+import useFormLoadingState from "../../hooks/formLoadingState";
+import useFormActionData from "../../hooks/formActionData";
 import { useEffect } from "react";
+ 
+import useFormHandler from "../../hooks/formHandler";
 
 export default () => {
   let from = useGetSearchParam("from") || "/";
-  let isLoggingIn = useFormLoadingState("username", "password");
-  let actionData = useFormActionData<User>();
+  let error = useGetSearchParam("error") || "/";
+  const navigateTo = useNavigate();
 
-  const navigate = useNavigate()
   useEffect(() => {
-    if (isLoggingIn) {
-      f7.dialog.close();
-      f7.dialog.preloader("Signing in");
-    }
-    if (actionData) {
-      f7.dialog.close();
-      if (actionData.message) f7.dialog.alert(actionData.message);
-      if (actionData.redirect) navigate(actionData.redirect, {replace: true});
-    }
-  }, [isLoggingIn, actionData]);
+    let alertText = "Something Went Wrong";
+    if (error == "unauthorised-access")
+      alertText = "You Must be Signed in First!";
+    if (error == "no-access") alertText = "You can access Private Page!";
+
+    f7.dialog.alert(alertText);
+  }, [error]);
+
+  const formHandler = useFormHandler();
 
   return (
     <Page noToolbar noNavbar noSwipeback loginScreen>

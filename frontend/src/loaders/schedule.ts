@@ -7,15 +7,22 @@ import { eachDayOfInterval, isSameDay } from "date-fns";
 const getSchedule = (date: string, schedule: Schedule[]) =>
   schedule.filter((_) => isSameDay(_.date, date));
 
-export const scheduleHome = async (context: LoaderFunctionArgs) => {
-  const searchParams = new URL(context.request.url).searchParams;
+export const scheduleHome = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
+  const searchParams = new URL(args.request.url).searchParams;
   const date = searchParams.get("date") as string;
 
   if (date) {
     await scheduleProvider.load({ date });
 
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       schedule: getSchedule(date, scheduleProvider.data.schedule),
     };
   } else {
@@ -24,13 +31,20 @@ export const scheduleHome = async (context: LoaderFunctionArgs) => {
   }
 };
 
-export const scheduleNewLoader = async (context: LoaderFunctionArgs) => {
-  const searchParams = new URL(context.request.url).searchParams;
+export const scheduleNewLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
+  const searchParams = new URL(args.request.url).searchParams;
   const selected = searchParams.get("selected") as string;
 
   if (selected) {
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       selected: selected.split(",").map((_) => new Date(_)),
     };
   } else {
@@ -39,9 +53,16 @@ export const scheduleNewLoader = async (context: LoaderFunctionArgs) => {
   }
 };
 
-export const scheduleEditLoader = async (context: LoaderFunctionArgs) => {
-  const searchParams = new URL(context.request.url).searchParams;
-  const url = context.request.url;
+export const scheduleEditLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
+  const searchParams = new URL(args.request.url).searchParams;
+  const url = args.request.url;
   const selectedString = searchParams.get("selected") as string;
 
   if (selectedString) {
@@ -57,7 +78,7 @@ export const scheduleEditLoader = async (context: LoaderFunctionArgs) => {
         : selected;
 
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       schedule: allDatesSelected.map((date) =>
         getSchedule(date.toISOString(), scheduleProvider.data.schedule)
       ),

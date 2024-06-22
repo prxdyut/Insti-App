@@ -5,14 +5,21 @@ import { attendanceProvider } from "../providers/attendance";
 import { ATTENDANCE_SLUG, SCHEDULE_SLUG } from "../utils/slugs";
 import { usersProvider } from "../providers/users";
 
-export const attendancesHomeLoader = async (context: LoaderFunctionArgs) => {
-  const searchParams = new URL(context.request.url).searchParams;
+export const attendancesHomeLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
+  const searchParams = new URL(args.request.url).searchParams;
   const date = searchParams.get("date") as string;
 
   if (date) {
     await attendanceProvider.load({ date });
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       ...attendanceProvider.data,
     };
   } else {
@@ -21,14 +28,21 @@ export const attendancesHomeLoader = async (context: LoaderFunctionArgs) => {
   }
 };
 
-export const attendancesNewLoader = async (context: LoaderFunctionArgs) => {
-  const searchParams = new URL(context.request.url).searchParams;
+export const attendancesNewLoader = async (args: LoaderFunctionArgs) => {
+  try {
+    await authProvider.checkAuth(args);
+  } catch (err) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", err as string);
+    return redirect("/login?" + searchParams.toString());
+  }
+  const searchParams = new URL(args.request.url).searchParams;
   const selected = searchParams.get("selected") as string;
   await usersProvider.load({});
 
   if (selected) {
     return {
-      user: authProvider.getUser(),
+      user: await authProvider.getUser(args),
       selected: new Date(selected),
       ...usersProvider.data,
     };

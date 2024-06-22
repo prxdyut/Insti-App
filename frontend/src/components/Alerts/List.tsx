@@ -2,6 +2,7 @@ import { format, parseISO } from "date-fns";
 import {
   Block,
   BlockTitle,
+  Button,
   List,
   ListItem,
   Page,
@@ -13,11 +14,20 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { formatTimestamp } from "../../routes/Alerts/helpers";
 import { ALERT_SLUG } from "../../utils/slugs";
 import { htmlToText } from "../../routes/Alerts/helpers";
+import ConditionalButton from "../Admin/Button";
 
-export default function AlertsList({ alerts }: { alerts: Alert[] }) {
-  const navigateTo = useNavigate()
+export default function AlertsList({
+  alerts,
+  user,
+}: {
+  alerts: Alert[];
+  user: User;
+}) {
+  const navigateTo = useNavigate();
+
   return (
     <Block className=" no-padding">
+      
       <List dividersIos mediaList outlineIos strongIos>
         {alerts.map(({ summary, date, title, description, uid }, i) => (
           <ListItem

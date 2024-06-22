@@ -4,11 +4,12 @@ import {
   type LoaderFunctionArgs,
 } from "react-router-dom";
 import { authProvider } from "../providers/auth";
+ 
 
-export async function loginAction({
-  request,
-}: LoaderFunctionArgs): Promise<ActionRes<UserRef>> {
-
+export async function loginAction(
+  args: LoaderFunctionArgs
+): Promise<FormActionData> {
+  const request = args.request;
   let formData = await request.formData();
   let username = formData.get("username") as string | null;
   let password = formData.get("password") as string | null;
@@ -16,15 +17,13 @@ export async function loginAction({
 
   if (!username) {
     return {
-      message: "You must provide a username to log in",
-      error: true,
+      error: "You must provide a username",
     };
   }
 
   if (!password) {
     return {
-      message: "You must provide the password to log in",
-      error: true,
+      error: "You must provide the password",
     };
   }
 
@@ -32,15 +31,13 @@ export async function loginAction({
     await authProvider.signin(username, password);
   } catch (error) {
     return {
-      message: error as string,
-      error: true,
+      error: error as string,
     };
   }
 
-  const user = await authProvider.getUser();
+  const user = await authProvider.getUser(args);
   return {
-    error: false,
-    res: user,
-    redirect: redirectTo as string
+    success: `Welcome ${user.firstName} ${user.lastName}`,
+    redirect: redirectTo as string,
   };
 }
