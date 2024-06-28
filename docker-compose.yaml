@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  bun:
+    container_name: bun-app
+    build:
+      context: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://pradyut:das@mongo:27017/
+      SECRET: kkx8XqVLCl8EOgwNFOcNK1zhObTZD05mU6jOoI0rHJM=
+    depends_on: 
+      - mongo
+      - minio
+  mongo:
+    container_name: mongo
+    build:
+      context: ./database
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./database/data/:/data/db/
+  minio:
+    container_name: minio
+    build:
+      context: ./storage
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./storage/data:/data

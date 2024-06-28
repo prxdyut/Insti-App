@@ -1,0 +1,10 @@
+backend/node_modules/
+backend/temp/
+
+database/data/
+
+frontend/node_modules/
+frontend/.vercel/
+frontend/dist/
+
+storage/data/
