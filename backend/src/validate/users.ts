@@ -15,11 +15,11 @@ export const validateEditUser = z.object({
   last: z.string().optional(),
   role: z.coerce.number().min(0).max(2).optional(),
   phone: z.string().optional(),
+  email: z.string().optional(),
 });
 export type editUserType = z.infer<typeof validateEditUser>;
 
 export const validateResetPassword = z.object({
-  id: z.string(),
   oldPassword: z.string(),
   newPassword: z.string(),
 });

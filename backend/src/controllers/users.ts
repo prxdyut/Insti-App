@@ -76,17 +76,22 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
 export const editUser = async (c: CustomContext<"form", editUserType>) => {
   try {
     const formData = c.req.valid("form");
-    const { first, last, role, phone } = formData;
+    const { first, last, role, phone, email } = formData;
 
     const id = c.req.param("id");
     const db = c.req.query("db") || "3A";
 
     const users = await Users(db);
-    const data = await users.findByIdAndUpdate(id, {
-      name: { first, last },
-      role,
-      phone,
-    });
+    const data = await users.findByIdAndUpdate(
+      id,
+      {
+        name: { first, last },
+        role,
+        phone,
+        email,
+      },
+      { new: true }
+    );
 
     return c.json({
       user: data,
@@ -101,7 +106,8 @@ export const resetPassword = async (
 ) => {
   try {
     const formData = c.req.valid("form");
-    const { newPassword, oldPassword, id } = formData;
+    const id = c.req.param("id")
+    const { newPassword, oldPassword } = formData;
     let start = performance.now(),
       end = performance.now();
 
@@ -125,7 +131,6 @@ export const resetPassword = async (
 
     return c.json({
       message: "Changed Password Successfully",
-      time: getPerformance(start, end),
     });
   } catch (error: any) {
     return c.text(`${error.message}`, 400);
@@ -167,9 +172,7 @@ export const loginUser = async (c: CustomContext<"form", LoginUserType>) => {
     end = performance.now();
 
     return c.json({
-      token,
-      message: "Logged in Successfully",
-      time: getPerformance(start, end),
+      token
     });
   } catch (error: any) {
     return c.text(`${error.message}`, 400);
