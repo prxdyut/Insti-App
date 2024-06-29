@@ -12,6 +12,8 @@ import getPerformance from "../utils/getPerformance";
 import { sign } from "hono/jwt";
 import { SECRET } from "../variables";
 import createMailId from "../utils/createMailId";
+import sendMail from "../utils/sendMail";
+import resetPasswordContent from "../contents/resetPassword";
 
 export const getUsers = async (c: Context) => {
   try {
@@ -61,6 +63,7 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
       first + " " + last,
       randomPassword
     );
+
     const success = !Boolean(mailcow.some((obj: any) => obj.type === "danger"));
     if (!success) {
       return c.text("Error in mail account generation", 400);
@@ -68,7 +71,12 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
 
     const main_email = (mail_slug + "@" + Bun.env.MAIL_DOMAIN) as string;
 
-    
+    const info = await sendMail(
+      backup_email,
+      "Password Set Link!",
+      resetPasswordContent(first + " " + last, "https://password.reset.link")
+    );
+    console.log(info);
 
     const users = await Users(db);
     const data = await users.insertMany([
@@ -158,42 +166,39 @@ export const resetPassword = async (
 
 export const loginUser = async (c: CustomContext<"form", LoginUserType>) => {
   // try {
-    const formData = c.req.valid("form");
-    const { unencryptedPassword, email } = formData;
-    let start = performance.now(),
-      end = performance.now();
-      console.log({ unencryptedPassword, email })
-
-    const db = c.req.query("db") || "3A";
-
-    const user = await Users(db);
-    let data = await user.findOne({ "email.main" : email });
-
-    const { password } = data;
-    if (!password) {
-      return c.text(`Invalid User`, 400);
-    }
-
-    const isCorrectPassword = await checkPassword(
-      unencryptedPassword,
-      password
-    );
-    if (!isCorrectPassword) {
-      return c.text(`Invalid Password`, 400);
-    }
-
-    const payload = {
-      id: data._id,
-      role: data.role,
-      exp: (Math.floor(Date.now() / 1000) + 60) * 1440 * 7 * 4 * 2,
-    };
-
-    const token = await sign(payload, SECRET);
+  const formData = c.req.valid("form");
+  const { unencryptedPassword, email } = formData;
+  let start = performance.now(),
     end = performance.now();
+  console.log({ unencryptedPassword, email });
 
-    return c.json({
-      token,
-    });
+  const db = c.req.query("db") || "3A";
+
+  const user = await Users(db);
+  let data = await user.findOne({ "email.main": email });
+
+  const { password } = data;
+  if (!password) {
+    return c.text(`Invalid User`, 400);
+  }
+
+  const isCorrectPassword = await checkPassword(unencryptedPassword, password);
+  if (!isCorrectPassword) {
+    return c.text(`Invalid Password`, 400);
+  }
+
+  const payload = {
+    id: data._id,
+    role: data.role,
+    exp: (Math.floor(Date.now() / 1000) + 60) * 1440 * 7 * 4 * 2,
+  };
+
+  const token = await sign(payload, SECRET);
+  end = performance.now();
+
+  return c.json({
+    token,
+  });
   // } catch (error: any) {
   //   return c.text(`${error.message}`, 400);
   // }
