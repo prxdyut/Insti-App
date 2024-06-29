@@ -2,15 +2,15 @@ version: '3.8'
 
 services:
   bun:
-    container_name: bun-app
+    container_name: bun
     build:
       context: ./backend
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: production
-      MONGO_URI: mongodb://pradyut:das@mongo:27017/
-      SECRET: kkx8XqVLCl8EOgwNFOcNK1zhObTZD05mU6jOoI0rHJM=
+    env_file:
+      - ./backend/.env
     depends_on: 
       - mongo
       - minio

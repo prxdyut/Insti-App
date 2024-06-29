@@ -10,7 +10,10 @@ const schema = new Schema(
     password: { type: String, required: true },
     role: { type: Number, required: true },
     phone: { type: String, required: true },
-    email: { type: String, required: true },
+    email: {
+      main: { type: String, required: true },
+      backup: { type: String, required: true },
+    },
     restrict: { type: Boolean, required: true, default: false },
     meta: { type: Object },
     lastLogIn: [

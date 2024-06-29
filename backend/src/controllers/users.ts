@@ -11,6 +11,7 @@ import checkPassword from "../utils/checkPassword";
 import getPerformance from "../utils/getPerformance";
 import { sign } from "hono/jwt";
 import { SECRET } from "../variables";
+import createMailId from "../utils/createMailId";
 
 export const getUsers = async (c: Context) => {
   try {
@@ -46,10 +47,28 @@ export const getUser = async (c: Context) => {
 export const createUser = async (c: CustomContext<"form", createUserType>) => {
   try {
     const formData = c.req.valid("form");
-    const { first, last, unencryptedPassword, role, phone, email } = formData;
-    const password = await hashPassword(unencryptedPassword);
+    const { first, last, role, phone, backup_email } = formData;
+    const randomPassword = "1234567890qwertyuiop";
+    const password = await hashPassword(randomPassword);
 
     const db = c.req.query("db") || "3A";
+    const mail_slug = (
+      (first + last + Math.round(Math.random() * 100)) as string
+    ).toLowerCase();
+
+    const mailcow = await createMailId(
+      mail_slug,
+      first + " " + last,
+      randomPassword
+    );
+    const success = !Boolean(mailcow.some((obj: any) => obj.type === "danger"));
+    if (!success) {
+      return c.text("Error in mail account generation", 400);
+    }
+
+    const main_email = (mail_slug + "@" + Bun.env.MAIL_DOMAIN) as string;
+
+    
 
     const users = await Users(db);
     const data = await users.insertMany([
@@ -61,7 +80,7 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
         password,
         role,
         phone,
-        email,
+        email: { backup: backup_email, main: main_email },
       },
     ]);
 
@@ -76,7 +95,7 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
 export const editUser = async (c: CustomContext<"form", editUserType>) => {
   try {
     const formData = c.req.valid("form");
-    const { first, last, role, phone, email } = formData;
+    const { first, last, role, phone, backup_email } = formData;
 
     const id = c.req.param("id");
     const db = c.req.query("db") || "3A";
@@ -88,7 +107,7 @@ export const editUser = async (c: CustomContext<"form", editUserType>) => {
         name: { first, last },
         role,
         phone,
-        email,
+        email: { backup: backup_email },
       },
       { new: true }
     );
@@ -106,7 +125,7 @@ export const resetPassword = async (
 ) => {
   try {
     const formData = c.req.valid("form");
-    const id = c.req.param("id")
+    const id = c.req.param("id");
     const { newPassword, oldPassword } = formData;
     let start = performance.now(),
       end = performance.now();
@@ -138,16 +157,17 @@ export const resetPassword = async (
 };
 
 export const loginUser = async (c: CustomContext<"form", LoginUserType>) => {
-  try {
+  // try {
     const formData = c.req.valid("form");
-    const { unencryptedPassword, id } = formData;
+    const { unencryptedPassword, email } = formData;
     let start = performance.now(),
       end = performance.now();
+      console.log({ unencryptedPassword, email })
 
     const db = c.req.query("db") || "3A";
 
     const user = await Users(db);
-    let data = await user.findById(id);
+    let data = await user.findOne({ "email.main" : email });
 
     const { password } = data;
     if (!password) {
@@ -172,9 +192,9 @@ export const loginUser = async (c: CustomContext<"form", LoginUserType>) => {
     end = performance.now();
 
     return c.json({
-      token
+      token,
     });
-  } catch (error: any) {
-    return c.text(`${error.message}`, 400);
-  }
+  // } catch (error: any) {
+  //   return c.text(`${error.message}`, 400);
+  // }
 };

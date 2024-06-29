@@ -26,8 +26,8 @@ users.get("/:id", executionTimeHeader, isAuthenticated, decodePayload, getUser);
 users.post(
   "/",
   executionTimeHeader,
-  isAuthenticated,
-  decodePayload,
+  // isAuthenticated,
+  // decodePayload,
   zValidator("form", validateCreateUser),
   createUser
 );
