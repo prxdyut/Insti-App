@@ -5,7 +5,7 @@ export default async (username: string, fullName: string, password: string) => {
 
   const raw = JSON.stringify({
     active: "1",
-    domain: "pradyutdas.online",
+    domain: Bun.env.MAIL_DOMAIN as string,
     local_part: username,
     name: fullName,
     password: password,
@@ -23,7 +23,7 @@ export default async (username: string, fullName: string, password: string) => {
   };
 
   return await fetch(
-    "https://mail.pradyutdas.online/api/v1/add/mailbox",
+    `https://mail.${Bun.env.MAIL_DOMAIN}/api/v1/add/mailbox`,
     requestOptions
   ).then((response) => response.json());
 };

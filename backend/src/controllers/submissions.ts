@@ -14,13 +14,22 @@ export const getSubmissions = async (c: Context) => {
   const Submission = await Submissions(db);
   const Assignment = await Assignments(db);
 
-  let data = await Assignment.findById(id);
-  if (!data) return c.text("Assignment not found", 400);
+  let data;
+  try {
+    data = await Assignment.findById(id);
+    if (!data) {
+      throw "Assignment not found";
+    }
 
-  data = await Submission.find({ assignmentId: id, createdBy: userId });
-  if (!data.length) return c.text("Submissions not found", 400);
+    data = await Submission.find({ assignmentId: id, createdBy: userId });
+    if (!data.length) {
+      throw "Submissions not found";
+    }
 
-  return c.json({ Submission: data });
+    return c.json({ Submission: data });
+  } catch (error: any) {
+    return c.text(error, 400);
+  }
 };
 
 export const createSubmission = async (
@@ -32,29 +41,34 @@ export const createSubmission = async (
   const db = c.req.query("db") || "3A";
   const Submission = await Submissions(db);
   const Assignment = await Assignments(db);
-  let data = await Assignment.findById(assignmentId);
+  
+  let data;
+  try {
+    data = await Assignment.findById(assignmentId);
+    if (!data) {
+      throw "Assignment not found";
+    }
 
-  if (!data) {
-    return c.text("Assignment not found", 400);
+    const late = isBefore(data.scheduleStart, new Date());
+
+    data = await Submission.insertMany([
+      {
+        assignmentId,
+        description,
+        files,
+        late,
+        createdBy: userId,
+      },
+    ]);
+    await Assignment.updateOne(
+      { _id: assignmentId },
+      { $inc: { totalSubmissions: 1 } }
+    );
+
+    return c.json({ Submission: data });
+  } catch (error: any) {
+    return c.text(error, 400);
   }
-
-  const late = isBefore(data.scheduleStart, new Date());
-
-  data = await Submission.insertMany([
-    {
-      assignmentId,
-      description,
-      files,
-      late,
-      createdBy: userId,
-    },
-  ]);
-  await Assignment.updateOne(
-    { _id: assignmentId },
-    { $inc: { totalSubmissions: 1 } }
-  );
-
-  return c.json({ Submission: data });
 };
 
 export const createSubmissionStatus = async (
@@ -70,32 +84,36 @@ export const createSubmissionStatus = async (
   const Submission = await Submissions(db);
   const Assignment = await Assignments(db);
 
-  let data = await Submission.findById(submissionId);
+  let data;
+  try {
+    data = await Submission.findById(submissionId);
+    if (!data) {
+      throw "Submission not found";
+    }
 
-  if (!data) {
-    return c.text("Submission not found", 400);
+    if (data.assignmentId != assignmentId) {
+      throw "Submission not found for this Assignment";
+    }
+
+    data = await Assignment.findById(data.assignmentId);
+    if (!data) {
+      throw "Assignment not found";
+    }
+
+    if (data.createdBy != userId && role != 2) {
+      throw "You can't modify Assignment Submission Status";
+    }
+
+    data = await Submission.findByIdAndUpdate(submissionId, {
+      status: {
+        remark,
+        value: status,
+        updated: new Date(),
+      },
+    });
+
+    return c.json({ Submission: data });
+  } catch (error: any) {
+    return c.text(error, 400);
   }
-
-  if (data.assignmentId != assignmentId) {
-    return c.text("Submission not found for this Assignment", 400);
-  }
-
-  data = await Assignment.findById(data.assignmentId);
-  if (!data) {
-    return c.text("Assignment not found", 400);
-  }
-
-  if (data.createdBy != userId ? role != 2 : false) {
-    return c.text("You cant modify Assignment Submission Status", 400);
-  }
-
-  data = await Submission.findByIdAndUpdate(submissionId, {
-    status: {
-      remark,
-      value: status,
-      updated: new Date(),
-    },
-  });
-
-  return c.json({ Submission: data });
 };

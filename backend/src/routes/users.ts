@@ -6,6 +6,7 @@ import {
   getUsers,
   loginUser,
   resetPassword,
+  setInitPassword,
 } from "../controllers/users";
 import { zValidator } from "@hono/zod-validator";
 import {
@@ -13,6 +14,7 @@ import {
   validateEditUser,
   validateLoginUser,
   validateResetPassword,
+  validateSetInitPassword,
 } from "../validate/users";
 import isAuthenticated from "../middlewares/isAuthenticated";
 import decodePayload from "../utils/decodePayload";
@@ -22,12 +24,17 @@ import executionTimeHeader from "../utils/executionTimeHeader";
 const users = new Hono();
 
 users.get("/", executionTimeHeader, isAuthenticated, decodePayload, getUsers);
-users.get("/:id", executionTimeHeader, isAuthenticated, decodePayload, getUser);
 users.post(
   "/",
   executionTimeHeader,
   zValidator("form", validateCreateUser),
   createUser
+);
+users.post(
+  "/setPassword",
+  executionTimeHeader,
+  zValidator("form", validateSetInitPassword),
+  setInitPassword
 );
 users.put(
   "/:id",
@@ -51,5 +58,7 @@ users.post(
   zValidator("form", validateLoginUser),
   loginUser
 );
+
+users.get("/:id", executionTimeHeader, isAuthenticated, decodePayload, getUser);
 
 export default users;

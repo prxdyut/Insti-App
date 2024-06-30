@@ -31,3 +31,9 @@ export const validateLoginUser = z.object({
   unencryptedPassword: z.string(),
 });
 export type LoginUserType = z.infer<typeof validateLoginUser>;
+
+export const validateSetInitPassword = z.object({
+  token: z.string(),
+  unencryptedPassword: z.string(),
+});
+export type SetInitPassword = z.infer<typeof validateSetInitPassword>;
