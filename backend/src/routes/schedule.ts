@@ -8,7 +8,10 @@ import {
   getSchedules,
 } from "../controllers/schedules";
 import { zValidator } from "@hono/zod-validator";
-import { validateCreateSchedule, validateEditSchedule } from "../validate/schedules";
+import {
+  validateCreateSchedule,
+  validateEditSchedule,
+} from "../validate/schedules";
 
 const schedule = new Hono();
 
@@ -29,12 +32,13 @@ schedule.post(
   createSchedule
 );
 
-schedule.put("/:id", 
+schedule.put(
+  "/:id",
   executionTimeHeader,
   isAuthenticated,
   decodePayload,
   zValidator("form", validateEditSchedule),
-editSchedule
+  editSchedule
 );
 
 export default schedule;

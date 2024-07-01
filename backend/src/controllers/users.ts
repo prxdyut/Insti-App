@@ -2,14 +2,13 @@ import { Context } from "hono";
 import { Users } from "../models/users";
 import {
   LoginUserType,
-  SetInitPassword,
   createUserType,
   editUserType,
+  resetPasswordLinkType,
   resetPasswordType,
 } from "../validate/users";
 import { hashPassword } from "../utils";
 import checkPassword from "../utils/checkPassword";
-import getPerformance from "../utils/getPerformance";
 import { decode, sign, verify } from "hono/jwt";
 import { ON_SERVER, SECRET } from "../variables";
 import createMailId from "../utils/createMailId";
@@ -18,13 +17,15 @@ import resetPasswordContent from "../contents/resetPassword";
 import { add } from "date-fns";
 import modifyMailPassword from "../utils/modifyMailPassword";
 import generateRandomPassword from "../utils/generateRandomPassword";
+import randomNum from "../utils/randomNum";
+import { ResetTokens } from "../models/resetTokens";
 
 export const getUsers = async (c: Context) => {
+  const db = c.req.query("db") || "3A";
+
   try {
-    const db = c.req.query("db") || "3A";
     const users = await Users(db);
     const data = await users.find();
-    if (!data.length) throw "No users found";
 
     return c.json({
       users: data,
@@ -35,13 +36,13 @@ export const getUsers = async (c: Context) => {
 };
 
 export const getUser = async (c: Context) => {
+  const db = c.req.query("db") || "3A";
+  const id = c.req.param("id");
   try {
-    const db = c.req.query("db") || "3A";
-    const id = c.req.param("id");
-
     const users = await Users(db);
     const data = await users.findById(id);
-    if (!data) throw `User not found for #${id}`;
+
+    if (!data) throw "No user Found";
 
     return c.json({
       user: data,
@@ -52,19 +53,18 @@ export const getUser = async (c: Context) => {
 };
 
 export const createUser = async (c: CustomContext<"form", createUserType>) => {
+  const formData = c.req.valid("form");
+  const { first, last, role, phone, backup_email } = formData;
+
   try {
-    const formData = c.req.valid("form");
-    const { first, last, role, phone, backup_email } = formData;
     let randomPassword = generateRandomPassword();
     let password = await hashPassword(randomPassword);
 
     const db = c.req.query("db") || "3A";
 
-    const mail_slug = (
-      (first + last + Math.round(Math.random() * 100)) as string
-    ).toLowerCase();
-
+    let mail_slug = ((first + last + randomNum(100)) as string).toLowerCase();
     const main_email = (mail_slug + "@" + Bun.env.MAIL_DOMAIN) as string;
+
     const payload = {
       email: main_email,
       type: "set-password",
@@ -72,6 +72,7 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
     };
 
     const token = await sign(payload, SECRET);
+
     const passwordSetLink = `https://${
       Bun.env.FRONTEND_URL as string
     }/setPassword?token=${token}`;
@@ -95,7 +96,6 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
         "Password Set Link!",
         resetPasswordContent(first + " " + last, passwordSetLink)
       );
-      console.log(info);
     }
 
     const users = await Users(db);
@@ -115,7 +115,6 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
     return c.json({
       user: data,
       token,
-      passwordSetLink,
     });
   } catch (error: any) {
     return c.text(`${error}`, 400);
@@ -123,13 +122,12 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
 };
 
 export const editUser = async (c: CustomContext<"form", editUserType>) => {
+  const formData = c.req.valid("form");
+  const { first, last, role, phone, backup_email } = formData;
+  const id = c.req.param("id");
+  const db = c.req.query("db") || "3A";
+
   try {
-    const formData = c.req.valid("form");
-    const { first, last, role, phone, backup_email } = formData;
-
-    const id = c.req.param("id");
-    const db = c.req.query("db") || "3A";
-
     const users = await Users(db);
     const data = await users.findByIdAndUpdate(
       id,
@@ -142,6 +140,8 @@ export const editUser = async (c: CustomContext<"form", editUserType>) => {
       { new: true }
     );
 
+    if (!data) throw "Could not edit User";
+
     return c.json({
       user: data,
     });
@@ -153,19 +153,19 @@ export const editUser = async (c: CustomContext<"form", editUserType>) => {
 export const resetPassword = async (
   c: CustomContext<"form", resetPasswordType>
 ) => {
-  try {
-    const formData = c.req.valid("form");
-    const id = c.req.param("id");
-    const { newPassword, oldPassword } = formData;
+  const formData = c.req.valid("form");
+  const id = c.req.param("id");
+  const { newPassword, oldPassword } = formData;
+  const db = c.req.query("db") || "3A";
 
-    const db = c.req.query("db") || "3A";
+  try {
     const user = await Users(db);
     let data = await user.findById(id);
 
-    const { password } = data;
-    if (!password) {
+    if (!data) {
       throw "Invalid Password";
     }
+    const { password } = data;
 
     const isCorrectPassword = await checkPassword(oldPassword, password);
     if (!isCorrectPassword) {
@@ -173,7 +173,12 @@ export const resetPassword = async (
     }
 
     const encryptedPassword = await hashPassword(newPassword);
-    data = await user.findByIdAndUpdate(id, { password: encryptedPassword });
+    data = await user.findByIdAndUpdate(
+      id,
+      { password: encryptedPassword },
+      { new: true }
+    );
+    if (!data) throw "Could not reset password";
 
     return c.json({
       message: "Changed Password Successfully",
@@ -183,22 +188,26 @@ export const resetPassword = async (
   }
 };
 
-export const setInitPassword = async (
-  c: CustomContext<"form", SetInitPassword>
+export const resetPasswordLink = async (
+  c: CustomContext<"form", resetPasswordLinkType>
 ) => {
+  const formData = c.req.valid("form");
+  const { unencryptedPassword, token: resetToken } = formData;
+  const {
+    payload: { email, type },
+  } = decode(resetToken);
+  const db = c.req.query("db") || "3A";
+
+  if (type != "set-password") throw "Invalid Token";
+
   try {
-    const formData = c.req.valid("form");
-    const { unencryptedPassword, token } = formData;
-    const {
-      payload: { email, expiry },
-    } = decode(token);
+    const ResetToken = await ResetTokens(db);
+    const isUsed = await ResetToken.findOne({ token: resetToken });
+    if (isUsed) throw "Token Already Used";
 
-    const isVerifiedToken = await verify(token, SECRET);
-    if (!isVerifiedToken) {
-      throw "Invalid Token";
-    }
+    const isVerifiedToken = await verify(resetToken, SECRET);
+    if (!isVerifiedToken) throw "Token Already Expired";
 
-    const db = c.req.query("db") || "3A";
     const user = await Users(db);
     let data = await user.findOne({ "email.main": email });
 
@@ -206,24 +215,49 @@ export const setInitPassword = async (
       throw "Invalid User";
     }
 
-    const mailcow = await modifyMailPassword(
-      unencryptedPassword,
-      email as string
-    );
-    
-    const success = !Boolean(mailcow.some((obj: any) => obj.type === "danger"));
-    if (!success) {
-      throw "Error in Changing mail password";
+    if (ON_SERVER) {
+      const mailcow = await modifyMailPassword(
+        unencryptedPassword,
+        email as string
+      );
+      const success = !Boolean(
+        mailcow.some((obj: any) => obj.type === "danger")
+      );
+      if (!success) {
+        throw "Error in Changing mail password";
+      }
     }
 
     const encryptedPassword = await hashPassword(unencryptedPassword);
     data = await user.findOneAndUpdate(
       { "email.main": email },
-      { password: encryptedPassword }
+      { password: encryptedPassword },
+      { new: true }
     );
 
+    if (!data) {
+      throw "Error in Changing account password";
+    }
+
+    const payload = {
+      id: data._id,
+      role: data.role,
+      type: "login",
+      exp: add(new Date(), { months: 1 }).getTime(),
+    };
+
+    const token = await sign(payload, SECRET);
+
+    await ResetToken.insertMany([
+      {
+        token: resetToken,
+        email,
+      },
+    ]);
+
     return c.json({
-      message: "Password Set Successfully",
+      message: "Loggedin Successfully",
+      token,
     });
   } catch (error: any) {
     return c.text(`${error}`, 400);
@@ -231,12 +265,12 @@ export const setInitPassword = async (
 };
 
 export const loginUser = async (c: CustomContext<"form", LoginUserType>) => {
+  const formData = c.req.valid("form");
+  const { unencryptedPassword, email } = formData;
+
+  const db = c.req.query("db") || "3A";
+
   try {
-    const formData = c.req.valid("form");
-    const { unencryptedPassword, email } = formData;
-
-    const db = c.req.query("db") || "3A";
-
     const user = await Users(db);
     let data = await user.findOne({ "email.main": email });
 
@@ -258,7 +292,7 @@ export const loginUser = async (c: CustomContext<"form", LoginUserType>) => {
       id: data._id,
       role: data.role,
       type: "login",
-      exp: (Math.floor(Date.now() / 1000) + 60) * 1440 * 7 * 4 * 2,
+      exp: add(new Date(), { months: 1 }).getTime(),
     };
 
     const token = await sign(payload, SECRET);

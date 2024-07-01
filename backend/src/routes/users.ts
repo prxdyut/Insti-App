@@ -6,7 +6,7 @@ import {
   getUsers,
   loginUser,
   resetPassword,
-  setInitPassword,
+  resetPasswordLink,
 } from "../controllers/users";
 import { zValidator } from "@hono/zod-validator";
 import {
@@ -14,7 +14,7 @@ import {
   validateEditUser,
   validateLoginUser,
   validateResetPassword,
-  validateSetInitPassword,
+  validateResetPasswordLink,
 } from "../validate/users";
 import isAuthenticated from "../middlewares/isAuthenticated";
 import decodePayload from "../utils/decodePayload";
@@ -31,10 +31,10 @@ users.post(
   createUser
 );
 users.post(
-  "/setPassword",
+  "/reset",
   executionTimeHeader,
-  zValidator("form", validateSetInitPassword),
-  setInitPassword
+  zValidator("form", validateResetPasswordLink),
+  resetPasswordLink
 );
 users.put(
   "/:id",

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="rzp-button1">Loading ...</button>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+      const processPayment = async () => {
+        const searchParams = new URL(location).searchParams;
+        const requestOptions = {
+          method: "GET",
+          redirect: "follow",
+        };
+
+        const res = await fetch(
+          "http://localhost:3000/api/transactions/order/" +
+            searchParams.get("id"),
+          requestOptions
+        ).then((response) => response.json());
+
+        const options = res.options;
+
+        if (!options) {
+          alert("Options was not get");
+          return;
+        }
+
+        const rzp = new Razorpay({
+          ...options,
+          async handler(res) {
+            const myHeaders = new Headers();
+            myHeaders.append(
+              "Authorization",
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODBmOGMxNjMzM2E5NTBkZGNjNWNiZiIsInJvbGUiOjAsInR5cGUiOiJsb2dpbiIsImV4cCI6MTM4Njc5MzQyMjYwNDgwfQ.6x9FKpr2ROui63QxxaLyTM9Z5TL6VfbKi70fgHp2Oh8"
+            );
+
+            const formdata = new FormData();
+            formdata.append("razorpay_order_id", res.razorpay_order_id);
+            formdata.append("razorpay_payment_id", res.razorpay_payment_id);
+            formdata.append("razorpay_signature", res.razorpay_signature);
+
+            const requestOptions = {
+              method: "POST",
+              headers: myHeaders,
+              body: formdata,
+              redirect: "follow",
+            };
+
+            fetch(
+              "http://localhost:3000/api/transactions/validate",
+              requestOptions
+            )
+              .then((response) => response.text())
+              .then((result) => console.log(result))
+              .catch((error) => console.error(error));
+          },
+        });
+
+        rzp.on("payment.failed", function (response) {
+          const myHeaders = new Headers();
+          myHeaders.append(
+            "Authorization",
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ODBmOGMxNjMzM2E5NTBkZGNjNWNiZiIsInJvbGUiOjAsInR5cGUiOiJsb2dpbiIsImV4cCI6MTM4Njc5MzQyMjYwNDgwfQ.6x9FKpr2ROui63QxxaLyTM9Z5TL6VfbKi70fgHp2Oh8"
+          );
+
+          const formdata = new FormData();
+          formdata.append(
+            "razorpay_order_id",
+            response.error.metadata.order_id
+          );
+          formdata.append(
+            "razorpay_payment_id",
+            response.error.metadata.payment_id
+          );
+
+          const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow",
+          };
+
+          fetch(
+            "http://localhost:3000/api/transactions/validate",
+            requestOptions
+          )
+            .then((response) => response.text())
+            .then((result) => console.log(result))
+            .catch((error) => console.error(error));
+        });
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        document.getElementById("rzp-button1").innerText = "Pay now";
+        document.getElementById("rzp-button1").onclick = async function (e) {
+          e.preventDefault();
+          rzp.open();
+        };
+      };
+
+      processPayment();
+    </script>
+  </body>
+</html>

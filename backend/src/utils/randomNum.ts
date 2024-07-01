@@ -1,0 +1,1 @@
+export default (length: number) => Math.round(Math.random() * length)

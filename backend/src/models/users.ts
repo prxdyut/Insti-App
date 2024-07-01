@@ -10,12 +10,18 @@ const schema = new Schema(
     password: { type: String, required: true },
     role: { type: Number, required: true },
     phone: { type: String, required: true },
+    customer_id: { type: String },
     email: {
       main: { type: String, required: true },
       backup: { type: String, required: true },
     },
     restrict: { type: Boolean, required: true, default: false },
     meta: { type: Object },
+    fee: {
+      total: { type: Number },
+      deduction: { type: Number },
+      note: { type: String },
+    },
     lastLogIn: [
       {
         date: { type: Date, required: true },

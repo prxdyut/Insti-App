@@ -7,21 +7,24 @@ export const getSchedules = async (c: Context) => {
   const db = c.req.query("db") || "3A";
   const month = c.req.query("month");
   const year = c.req.query("year");
-  
-  if (month && !Number(month)) {
-    throw "Month is not provided";
-  }
-  if (year && !Number(year)) {
-    throw "Year is not provided";
-  }
+  try {
+    if (month && !Number(month)) {
+      throw "Month is not provided";
+    }
+    if (year && !Number(year)) {
+      throw "Year is not provided";
+    }
 
-  const start = startOfMonth(new Date(Number(year), Number(month) - 1));
-  const end = endOfMonth(new Date(Number(year), Number(month) - 1));
+    const start = startOfMonth(new Date(Number(year), Number(month) - 1));
+    const end = endOfMonth(new Date(Number(year), Number(month) - 1));
 
-  const Schedule = await Schedules(db);
-  const data = await Schedule.find({ date: { $gte: start, $lte: end } });
-  
-  return c.json({ Schedules: data });
+    const Schedule = await Schedules(db);
+    const data = await Schedule.find({ date: { $gte: start, $lte: end } });
+
+    return c.json({ Schedules: data });
+  } catch (error: any) {
+    return c.text(`${error}`, 400);
+  }
 };
 
 export const createSchedule = async (
@@ -31,7 +34,7 @@ export const createSchedule = async (
   const payload = c.get("jwtPayload");
   const db = c.req.query("db") || "3A";
   const Schedule = await Schedules(db);
-  
+
   try {
     const data = await Schedule.insertMany([
       {
@@ -46,7 +49,7 @@ export const createSchedule = async (
       },
     ]);
     return c.json({ Schedule: data });
-  } catch (error:any) {
+  } catch (error: any) {
     return c.text(error, 400);
   }
 };
@@ -60,9 +63,9 @@ export const editSchedule = async (
 
   const db = c.req.query("db") || "3A";
   const Schedule = await Schedules(db);
-  
+
   try {
-    let data = await Schedule.findById(id) as Schedules;
+    let data = (await Schedule.findById(id)) as Schedules;
 
     if (!data) {
       throw "Schedule not found";
@@ -72,7 +75,7 @@ export const editSchedule = async (
       throw "You are not Authorised to perform this action";
     }
 
-    data = await Schedule.findByIdAndUpdate(
+    data = (await Schedule.findByIdAndUpdate(
       id,
       {
         title,
@@ -82,10 +85,10 @@ export const editSchedule = async (
         subject,
       },
       { new: true }
-    ) as Schedules;
+    )) as Schedules;
 
     return c.json({ Schedule: data });
-  } catch (error:any) {
+  } catch (error: any) {
     return c.text(error, 400);
   }
 };
