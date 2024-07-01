@@ -2,7 +2,7 @@ import { Schema, InferSchemaType, model } from "mongoose";
 import defineModel from "../utils/defineModel";
 
 const schema = new Schema({
-  punches: [{ type: Date, required: true }],
+  punches: [{ type: String, required: true }],
   date: { type: Date, required: true },
   userId: { type: Schema.ObjectId, ref: "Users", required: true },
 });

@@ -7,13 +7,14 @@ export const getSchedules = async (c: Context) => {
   const db = c.req.query("db") || "3A";
   const month = c.req.query("month");
   const year = c.req.query("year");
+  if (month && !Number(month)) {
+    throw "Month is not provided";
+  }
+  if (year && !Number(year)) {
+    throw "Year is not provided";
+  }
+  
   try {
-    if (month && !Number(month)) {
-      throw "Month is not provided";
-    }
-    if (year && !Number(year)) {
-      throw "Year is not provided";
-    }
 
     const start = startOfMonth(new Date(Number(year), Number(month) - 1));
     const end = endOfMonth(new Date(Number(year), Number(month) - 1));

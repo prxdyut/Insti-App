@@ -15,6 +15,8 @@ import resources from "./routes/resources";
 import schedule from "./routes/schedule";
 import transactions from "./routes/transactions";
 import { serve } from "bun";
+import attendance from "./routes/attendance";
+import scores from "./routes/scores";
 
 const app = new Hono().basePath("/api");
 
@@ -30,8 +32,10 @@ app.use(
 
 app.route("/assignments", assignments);
 app.route("/assignments", submissions);
+app.route("/attendance", attendance);
 app.route("/doubts", doubts);
 app.route("/doubts", replies);
+app.route("/scores", scores);
 app.route("/alerts", alerts);
 app.route("/users", users);
 app.route("/holidays", holidays);

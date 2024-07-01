@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const validateCreateSchedule = z.object({
-  subject: z.string(),
+  subject: z.coerce.number(),
   title: z.string(),
   date: z.coerce.date(),
   timeStart: z.string(),
@@ -10,7 +10,7 @@ export const validateCreateSchedule = z.object({
 export type createScheduleType = z.infer<typeof validateCreateSchedule>;
 
 export const validateEditSchedule = z.object({
-  subject: z.string().optional(),
+  subject: z.coerce.number().optional(),
   title: z.string().optional(),
   date: z.coerce.date().optional(),
   timeStart: z.string().optional(),

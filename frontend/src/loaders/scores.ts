@@ -67,13 +67,15 @@ export const scoresEditLoader = async (args: LoaderFunctionArgs) => {
     searchParams.set("error", err as string);
     return redirect("/login?" + searchParams.toString());
   }
+
   await scoresProvider.load({});
   const id = args.params.id;
 
   const searchParams = new URLSearchParams();
   await usersProvider.load({});
+
   await allScoresProvider.load({});
-  const allScore = allScoresProvider.data.scores.find((_) => _.uid ==id);
+  const allScore = allScoresProvider.data.scores.find((_) => _.uid == id);
 
   if (id && allScore)
     return {
