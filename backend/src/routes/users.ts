@@ -27,6 +27,8 @@ users.get("/", executionTimeHeader, isAuthenticated, decodePayload, getUsers);
 users.post(
   "/",
   executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
   zValidator("form", validateCreateUser),
   createUser
 );
@@ -58,7 +60,6 @@ users.post(
   zValidator("form", validateLoginUser),
   loginUser
 );
-
 users.get("/:id", executionTimeHeader, isAuthenticated, decodePayload, getUser);
 
 export default users;
