@@ -3,7 +3,6 @@ import React from "react";
 import FormBuilder from "../../components/Form/Builder";
 import useFormHandler from "../../hooks/formHandler";
 import { useLoaderData } from "react-router-dom";
- 
 
 export default function ScoresEdit() {
   const { users, allScore } = useLoaderData() as {
@@ -11,9 +10,10 @@ export default function ScoresEdit() {
     allScore: AllScore;
   };
 
-  const allUsersObtained = allScore.users
-    .split(",")
-    .map((user, i) => ({ userid: user, score: allScore.obtained[i] }));
+  const allUsersObtained = allScore.users.map((user, i) => ({
+    userid: user.userId,
+    score: allScore.obtained[i],
+  }));
 
   const formHandler = useFormHandler();
 
@@ -59,7 +59,9 @@ export default function ScoresEdit() {
           },
           { type: "block", label: "Students" },
           ...users.map((user, i): FormBuilder => {
-            const score = allUsersObtained.find(_ => _.userid == user.userId)?.score || ''
+            const score =
+              allUsersObtained.find((_) => _.userid == user.userId)?.score ||
+              "";
             return {
               type: "number",
               label: `${user?.firstName} ${user?.lastName} - ${user?.userId}`,

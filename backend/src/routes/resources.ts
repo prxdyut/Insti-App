@@ -4,6 +4,7 @@ import isAuthenticated from "../middlewares/isAuthenticated";
 import decodePayload from "../utils/decodePayload";
 import {
   createResource,
+  deleteResource,
   editResource,
   getResource,
   getResources,
@@ -47,4 +48,11 @@ resources.put(
   editResource
 );
 
+resources.delete(
+  "/:id",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  deleteResource
+);
 export default resources;

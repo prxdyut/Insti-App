@@ -377,7 +377,7 @@ const PERFORMANCE_ROUTES = createRoutes([
     path: `/${slugs.PERFORMANCE_SLUG}`,
     Component: components.ChartsPerformance,
     loader: loaders.performanceHome,
-    access: ["student", "admin"],
+    access: ["student", "tutor", "admin"],
     ui: {
       heading: "Performance",
     },

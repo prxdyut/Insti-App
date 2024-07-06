@@ -66,6 +66,7 @@ export const scheduleEditLoader = async (args: LoaderFunctionArgs) => {
   const selectedString = searchParams.get("selected") as string;
 
   if (selectedString) {
+    console.log("selectedString", selectedString)
     const selected = selectedString.split(",").map((_) => new Date(_));
     await scheduleProvider.load({ dates: selected });
 

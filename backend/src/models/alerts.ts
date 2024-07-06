@@ -10,9 +10,11 @@ const schema = new Schema({
     label: { type: String },
     url: { type: String },
   },
+  deleted: { type: Boolean, default: false },
   campaignId: { type: String },
   createdBy: { type: Schema.ObjectId, ref: "Users", required: true },
-});
+},
+{ timestamps: true });
 
 export type Alerts = InferSchemaType<typeof schema>;
 export const Alerts = defineModel("Alerts", schema);

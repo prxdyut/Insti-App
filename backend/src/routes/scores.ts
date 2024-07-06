@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import executionTimeHeader from "../utils/executionTimeHeader";
 import isAuthenticated from "../middlewares/isAuthenticated";
 import decodePayload from "../utils/decodePayload";
-import { createScores, getScore, getScores } from "../controllers/scores";
+import { createScores, deleteScore, getScore, getScores } from "../controllers/scores";
 import { zValidator } from "@hono/zod-validator";
 import { validateCreateScores } from "../validate/scores";
 
@@ -31,10 +31,13 @@ scores.put("/:id", (c) => {
   return c.json({ success: true });
 });
 
-scores.delete("/:id", (c) => {
-  // Tutor - self
-  // Admin
-  return c.json({ success: true });
-});
+
+scores.delete(
+  "/:id",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  deleteScore
+);
 
 export default scores;

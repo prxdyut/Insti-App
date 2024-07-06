@@ -1,5 +1,6 @@
 import { del, get, set, update } from "idb-keyval";
 import subjects from "../utils/subjects";
+import { user1, user2 } from "../data/users";
 
 export const scoresProvider: Provider<{ scores: Score[] }> = {
   data: { scores: [] },
@@ -290,20 +291,20 @@ export const scoresProvider: Provider<{ scores: Score[] }> = {
   },
 };
 
-export const allScoresProvider: Provider<{ scores: AllScore[] }> = {
-  data: { scores: [] },
+export const allScoresProvider: Provider<{ allScores: AllScore[] }> = {
+  data: { allScores: [] },
   initial: true,
   async load() {
-    const data = {
-      scores: [
+    const data: { allScores: AllScore[] } = {
+      allScores: [
         {
           uid: "101",
           testId: "T1",
           title: "Midterm Exam",
           subject: 19, // computer science
           total: 100,
-          obtained: [85, 90, 78],
-          users: "1,2,3",
+          obtained: [85, 90],
+          users: [user1, user2],
           answers: [
             {
               _id: "A1",
@@ -358,8 +359,8 @@ export const allScoresProvider: Provider<{ scores: AllScore[] }> = {
           title: "Final Exam",
           subject: 18, // mathematics
           total: 100,
-          obtained: [88, 76, 92],
-          users: "4,5,6",
+          obtained: [88, 76],
+          users: [user1, user2],
           answers: [
             {
               _id: "A2",
@@ -414,8 +415,8 @@ export const allScoresProvider: Provider<{ scores: AllScore[] }> = {
           title: "Quarterly Test",
           subject: 16, // biology
           total: 50,
-          obtained: [40, 42, 38],
-          users: "7,8,9",
+          obtained: [40, 42],
+          users: [user2, user1],
           answers: [
             {
               _id: "A3",
@@ -470,8 +471,8 @@ export const allScoresProvider: Provider<{ scores: AllScore[] }> = {
           title: "Yearly Exam",
           subject: 10, // economics
           total: 150,
-          obtained: [120, 110, 125],
-          users: "10,1,2",
+          obtained: [120, 110],
+          users: [user2, user1],
           answers: [
             {
               _id: "A4",

@@ -1,18 +1,7 @@
-import { format, parseISO } from "date-fns";
-import {
-  Block,
-  BlockTitle,
-  List,
-  ListItem,
-  Page,
-  SwipeoutActions,
-  SwipeoutButton,
-} from "framework7-react";
-import React from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { formatTimestamp } from "../../routes/Alerts/helpers";
+import { Block, List, ListItem } from "framework7-react";
+import { useNavigate } from "react-router-dom";
 import subjects from "../../utils/subjects";
-import { DOUBTS_SLUG, SCORES_SLUG } from "../../utils/slugs";
+import { SCORES_SLUG } from "../../utils/slugs";
 
 export default function ScoresList({ scores }: { scores: Score[] }) {
   const navigateTo = useNavigate()

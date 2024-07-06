@@ -13,6 +13,7 @@ const schema = new Schema(
     },
     late: { type: Boolean },
     createdBy: { type: Schema.ObjectId, ref: "Users", required: true },
+    deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

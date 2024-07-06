@@ -18,6 +18,9 @@ import { serve } from "bun";
 import attendance from "./routes/attendance";
 import scores from "./routes/scores";
 
+import { format, startOfDay } from "date-fns";
+import { Users } from "./models/users";
+import { Attendances } from "./models/attendances";
 const app = new Hono().basePath("/api");
 
 app.use("*", logger(), prettyJSON());
@@ -29,6 +32,7 @@ app.use(
     allowMethods: ["GET", "POST", "DELETE", "PUT"],
   })
 );
+
 
 app.route("/assignments", assignments);
 app.route("/assignments", submissions);
@@ -44,7 +48,8 @@ app.route("/performances", performance);
 app.route("/resources", resources);
 app.route("/schedules", schedule);
 app.route("/transactions", transactions);
-app.get("/", c => c.html(`<!DOCTYPE html>
+app.get("/", (c) =>
+  c.html(`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -100,7 +105,42 @@ app.get("/", c => c.html(`<!DOCTYPE html>
     </script>
   </body>
 </html>
-`))
+`)
+);
+
+app.get("/attendance/punch", async (c) => {
+  const uid = c.req.query("uid") as string;
+  const timestamp = c.req.query("timestamp") as string;
+
+  if (!uid && !timestamp) throw "Invalid request";
+
+  const User = await Users("3A");
+  const user = await User.findOne({ "uid.card": uid, "uid.tag": uid });
+
+  if (!user) throw "User not found";
+
+  const userId = user._id;
+  const db = user.batch;
+  const date = startOfDay(timestamp);
+  const punch = format(date, "HH:mm");
+
+  const Attendance = await Attendances(db);
+  await Attendance.findOneAndUpdate(
+    { date, userId },
+    {
+      date,
+      userId,
+      $push: {
+        punches: punch,
+      },
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  return c.json({ success: true }, 200);
+});
+
+
 const port = Bun.env.PORT || 3000;
 
 export default {

@@ -17,7 +17,9 @@ const schema = new Schema({
     answers: [{ type: Schema.ObjectId, ref: "Files" }],
   },
   createdBy: { type: Schema.ObjectId, ref: "Users", required: true },
-});
+  deleted: { type: Boolean, default: false },
+},
+{ timestamps: true });
 
 export type Scores = InferSchemaType<typeof schema>;
 export const Scores = defineModel("Scores", schema);

@@ -13,9 +13,12 @@ export const scoresHomeLoader = async (args: LoaderFunctionArgs) => {
     return redirect("/login?" + searchParams.toString());
   }
   await scoresProvider.load({});
+  await allScoresProvider.load({});
+
   return {
     user: await authProvider.getUser(args),
     ...scoresProvider.data,
+    ...allScoresProvider.data,
   };
 };
 
@@ -28,15 +31,20 @@ export const ScoresSingleLoader = async (args: LoaderFunctionArgs) => {
     return redirect("/login?" + searchParams.toString());
   }
   await scoresProvider.load({});
+  await allScoresProvider.load({});
   const id = args.params.id;
   const { scores } = scoresProvider.data;
+  const { allScores } = allScoresProvider.data;
   const score = scores.find((_) => _.uid === id);
+  const allScore = allScores.find((_) => _.uid === id);
+
   const searchParams = new URLSearchParams();
 
-  if (score) {
+  if (score || allScore) {
     return {
       user: await authProvider.getUser(args),
       score,
+      allScore,
     };
   } else {
     searchParams.set("error", "invalid-id");
@@ -75,7 +83,7 @@ export const scoresEditLoader = async (args: LoaderFunctionArgs) => {
   await usersProvider.load({});
 
   await allScoresProvider.load({});
-  const allScore = allScoresProvider.data.scores.find((_) => _.uid == id);
+  const allScore = allScoresProvider.data.allScores.find((_) => _.uid == id);
 
   if (id && allScore)
     return {

@@ -5,6 +5,7 @@ import isAuthenticated from "../middlewares/isAuthenticated";
 import executionTimeHeader from "../utils/executionTimeHeader";
 import {
   createAssignment,
+  deleteAssignment,
   editAssignment,
   getAssignment,
   getAssignments,
@@ -45,6 +46,13 @@ assignments.put(
   decodePayload,
   zValidator("form", validateEditAssignment),
   editAssignment
+);
+assignments.delete(
+  "/:id",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  deleteAssignment
 );
 
 export default assignments;

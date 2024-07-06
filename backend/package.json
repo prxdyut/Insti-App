@@ -6,6 +6,7 @@
   "dependencies": {
     "@hono/zod-validator": "^0.2.2",
     "@types/nodemailer": "^6.4.15",
+    "bun-app": ".",
     "crypto": "^1.0.1",
     "date-fns": "^3.6.0",
     "hono": "^4.4.7",

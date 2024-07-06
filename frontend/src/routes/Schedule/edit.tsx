@@ -1,37 +1,15 @@
-import {
-  AccordionContent,
-  Block,
-  BlockTitle,
-  List,
-  ListItem,
-  Page,
-  f7,
-} from "framework7-react";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  changeCalendarScheduleEdit,
-  onCalendarScheduleEdit,
-} from "../../events/calendarScheduleEdit";
-import { eachDayOfInterval, format } from "date-fns";
+import { Block, BlockTitle, Page, f7 } from "framework7-react";
+import { useEffect, useRef } from "react";
+import { format, sub } from "date-fns";
 import FormBuilder from "../../components/Form/Builder";
 import useFormHandler from "../../hooks/formHandler";
 import { useLoaderData, useSearchParams } from "react-router-dom";
-
 export default function ScheduleEdit() {
   const { selected, schedule } = useLoaderData() as {
     selected: Date[];
     schedule: Schedule[][];
   };
-
   const formHandler = useFormHandler();
-  const allDatesSelected =
-    selected.length == 2
-      ? eachDayOfInterval({
-          start: selected[0],
-          end: selected[1],
-        })
-      : selected;
-
   const extendedStructure: FormBuilder[][] = schedule.map((_) =>
     _.flatMap((__): FormBuilder[] => [
       { type: "block", label: format(__.date, "dd MMM, yyyy") },
@@ -62,7 +40,7 @@ export default function ScheduleEdit() {
       },
     ])
   );
-  console.log(extendedStructure);
+
   return (
     <Page>
       <CalendarBlock />
@@ -99,7 +77,7 @@ function CalendarBlock() {
 
       calendarInline.current = f7.calendar.create({
         containerEl: "#demo-calendar-inline-container",
-        value: [new Date()],
+        value: [sub(new Date(searchParams.get('selected') as string), {days: 1})],
         rangePicker: true,
         renderToolbar() {
           return `
@@ -138,7 +116,7 @@ function CalendarBlock() {
               "selected",
               (value as Date[]).map((_) => _.toISOString()).join(",")
             );
-            setSearchParms(searchParams);
+            setSearchParms(searchParams, {replace: true});
           },
         },
       });

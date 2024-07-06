@@ -7,7 +7,7 @@ import {
   validateEditHoliday,
 } from "../validate/holidays";
 import { zValidator } from "@hono/zod-validator";
-import { createHoliday, editHoliday } from "../controllers/holidays";
+import { createHoliday, deleteHoliday, editHoliday } from "../controllers/holidays";
 
 const holidays = new Hono();
 
@@ -26,6 +26,13 @@ holidays.put(
   decodePayload,
   zValidator("form", validateEditHoliday),
   editHoliday
+);
+holidays.delete(
+  "/:id",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  deleteHoliday
 );
 
 export default holidays;

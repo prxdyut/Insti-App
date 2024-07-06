@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import {
   createDoubt,
+  deleteDoubt,
   editDoubt,
   getDoubt,
   getDoubts,
@@ -39,6 +40,13 @@ doubts.put(
   decodePayload,
   zValidator("form", validateEditDoubt),
   editDoubt
+);
+doubts.delete(
+  "/:id",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  deleteDoubt
 );
 
 export default doubts;

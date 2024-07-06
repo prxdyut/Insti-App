@@ -9,7 +9,9 @@ const schema = new Schema({
     end: { type: String, required: true },
   },
   createdBy: { type: Schema.ObjectId, ref: "Users", required: true },
-});
+  deleted: { type: Boolean, default: false },
+},
+{ timestamps: true });
 
 export type Schedules = InferSchemaType<typeof schema>;
 export const Schedules = defineModel("Schedules", schema);

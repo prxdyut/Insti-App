@@ -19,10 +19,18 @@ RUN cd /temp/prod && bun install --frozen-lockfile --production
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
 COPY . .
-# COPY --from=prerelease /usr/src/app/src/index.ts .
-# COPY --from=prerelease /usr/src/app/package.json .
 
-# run the app
+# Set proper permissions
+RUN chown -R bun:bun /usr/src/app
+RUN chmod -R 755 /usr/src/app
+
+# Verify node_modules contents (for debugging)
+RUN ls -la /usr/src/app/node_modules
+
+# Switch to non-root user
 USER bun
+
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "dev" ]
+
+# Run the app with production flag set to false to include dev dependencies
+ENTRYPOINT [ "bun", "run", "--production=false", "dev" ]

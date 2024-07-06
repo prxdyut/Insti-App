@@ -20,7 +20,10 @@ export const getAttendances = async (c: Context) => {
     const end = endOfMonth(new Date(Number(year), Number(month) - 1));
 
     const Attendance = await Attendances(db);
-    const data = await Attendance.find({ date: { $gte: start, $lte: end } });
+    const data = await Attendance.find({
+      date: { $gte: start, $lte: end },
+      deleted: false,
+    });
 
     return c.json({ Attendances: data });
   } catch (error: any) {

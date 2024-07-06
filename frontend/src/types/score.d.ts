@@ -18,8 +18,8 @@ type AllScore = {
   title: string;
   subject: number;
   total: number;
-  obtained:number[];
-  users: string;
+  obtained: number[];
+  users: User[];
   answers: _File[];
   questions: _File[];
   date: Date;

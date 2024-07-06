@@ -12,6 +12,7 @@ import {
   validateCreateSchedule,
   validateEditSchedule,
 } from "../validate/schedules";
+import { deleteDoubt } from "../controllers/doubts";
 
 const schedule = new Hono();
 
@@ -39,6 +40,13 @@ schedule.put(
   decodePayload,
   zValidator("form", validateEditSchedule),
   editSchedule
+);
+schedule.delete(
+  "/:id",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  deleteDoubt
 );
 
 export default schedule;

@@ -12,7 +12,8 @@ const schema = new Schema({
   size: { type: Number, required: true },
   type: { type: String, required: true },
   createdBy: { type: Schema.ObjectId, ref: "Users", required: true },
-});
+},
+{ timestamps: true });
 
 export type Files = InferSchemaType<typeof schema>;
 export const Files = defineModel("Files", schema);

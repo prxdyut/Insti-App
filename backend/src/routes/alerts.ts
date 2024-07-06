@@ -8,6 +8,7 @@ import isAuthenticated from "../middlewares/isAuthenticated";
 import executionTimeHeader from "../utils/executionTimeHeader";
 import {
   createAlert,
+  deleteAlert,
   editAlert,
   getAlert,
   getAlerts,
@@ -38,6 +39,13 @@ alerts.put(
   decodePayload,
   zValidator("form", validateEditAlert),
   editAlert
+);
+alerts.delete(
+  "/:id",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  deleteAlert
 );
 
 export default alerts;

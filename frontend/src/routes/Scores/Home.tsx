@@ -7,24 +7,24 @@ import { useLoaderData } from "react-router-dom";
 import subjects from "../../utils/subjects";
 import ScoresList from "../../components/Scores/List";
 import ConditionalButton from "../../components/Admin/Button";
+import ScoresListAdmin from "../../components/Scores/ListAdmin";
 
 export default function ScoresHome() {
   const data = useLoaderData() as {
     scores: Score[];
-    user: User
+    allScores: AllScore[];
+    user: User;
   };
+
+  const visibleForStudent = data.user.role == "student";
 
   return (
     <Page>
-      <ConditionalButton
-        user={data.user}
-        className="px-4 flex justify-end -mb-5 mt-2"
-        label="New Score"
-        navigate="./new"
-      />
-      {/* <BlockTitle>Tests</BlockTitle> */}
-
-     <ScoresList {...data} />
+      {visibleForStudent ? (
+        <ScoresList {...data} />
+      ) : (
+        <ScoresListAdmin {...data} />
+      )}
     </Page>
   );
 }

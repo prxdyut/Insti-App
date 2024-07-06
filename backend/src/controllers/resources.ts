@@ -9,7 +9,8 @@ export const getResources = async (c: Context) => {
     const data = await Resource.find();
     return c.json({ Resources: data });
   } catch (error: any) {
-    return c.text(error, 400) ; }
+    return c.text(error, 400);
+  }
 };
 
 export const getResource = async (c: Context) => {
@@ -23,7 +24,8 @@ export const getResource = async (c: Context) => {
     }
     return c.json({ Resource: data });
   } catch (error: any) {
-    return c.text(error, 400) ; }
+    return c.text(error, 400);
+  }
 };
 
 export const createResource = async (
@@ -45,7 +47,8 @@ export const createResource = async (
     ]);
     return c.json({ Resource: data });
   } catch (error: any) {
-    return c.text(error, 400) ; }
+    return c.text(error, 400);
+  }
 };
 
 export const editResource = async (
@@ -81,5 +84,37 @@ export const editResource = async (
 
     return c.json({ Resource: data });
   } catch (error: any) {
-    return c.text(error, 400) ; }
+    return c.text(error, 400);
+  }
+};
+
+export const deleteResource = async (c: Context) => {
+  try {
+    const id = c.req.param("id");
+    const { id: userId, role } = c.get("jwtPayload");
+
+    const db = c.req.query("db") || "3A";
+    const Resource = await Resources(db);
+    let data = await Resource.findOne({ _id: id, deleted: false });
+
+    if (!data) {
+      throw "Resource not found";
+    }
+
+    if (!(data.createdBy === userId && role === 2)) {
+      throw "You are not authorized to perform this action";
+    }
+
+    data = await Resource.findByIdAndUpdate(
+      id,
+      {
+        deleted: true,
+      },
+      { new: true }
+    );
+
+    return c.json({});
+  } catch (error: any) {
+    return c.text(error, 400);
+  }
 };

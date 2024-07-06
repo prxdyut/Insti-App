@@ -6,6 +6,12 @@ import { getPerformance } from "../controllers/performances";
 
 const performance = new Hono();
 
-performance.get("/:UId", executionTimeHeader, isAuthenticated, decodePayload, getPerformance);
+performance.get(
+  "/:UId",
+  executionTimeHeader,
+  isAuthenticated,
+  decodePayload,
+  getPerformance
+);
 
 export default performance;

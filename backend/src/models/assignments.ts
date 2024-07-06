@@ -13,6 +13,7 @@ const schema = new Schema(
       end: { type: Date, required: true },
     },
     createdBy: { type: Schema.ObjectId, ref: "Users", required: true },
+    deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

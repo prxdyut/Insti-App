@@ -38,15 +38,6 @@ export default function DoubtDetails() {
         `}
       </style>
       <Block>
-      <div className=" flex">
-          <ConditionalButton
-            user={user}
-            className="mb-4"
-            label="Edit"
-            navigate="./edit"
-            buttonProps={{ small: true }}
-          />
-        </div>
         <div className="text-xl font-semibold mb-4">{doubt.title}</div>
         <div className="text-xs mb-1">{format(doubt.date, "dd MMM, yyyy")}</div>
         <div className="text-base mb-2 capitalize">

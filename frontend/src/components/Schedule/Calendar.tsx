@@ -10,6 +10,7 @@ import {
   f7,
 } from "framework7-react";
 import { useSearchParams } from "react-router-dom";
+import { add } from "date-fns";
 
 export default function ScheduleCalendar() {
   const calendarInline = useRef<any>(null);
@@ -77,7 +78,7 @@ export default function ScheduleCalendar() {
             );
           },
           change(calendar, value) {
-            setSelected((value as Date[])[0]);
+            setSelected(add((value as Date[])[0], {days: 1}));
           },
         },
       });

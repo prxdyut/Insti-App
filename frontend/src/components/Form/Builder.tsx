@@ -98,14 +98,14 @@ export default function FormBuilder({
         <input type="hidden" name="class" value={localData?.class} />
 
         {/* {_} edits needed {_} */}
-        <div className=" flex justify-end mx-4 gap-2">
+        {Boolean(structure.length) && <div className=" flex justify-end mx-4 gap-2">
           <Button type="reset" className=" w-min" outline>
             Reset
           </Button>
           <Button type="submit" className=" w-min" fill>
             {submit}
           </Button>
-        </div>
+        </div>}
       </Form>
     </div>
   );

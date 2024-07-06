@@ -8,9 +8,10 @@ export const getScores = async (c: Context) => {
 
   try {
     const Score = await Scores(db);
-    const data = await Score.find();
+    const data = await Score.find({ deleted: false });
+    if (!data) throw "Score not found";
 
-    return c.json({ Scores: data }, 200);
+    return c.json({ scores: data }, 200);
   } catch (error: any) {
     return c.text(`${error}`, 400);
   }
@@ -24,6 +25,7 @@ export const getScore = async (c: Context) => {
     const Score = await Scores(db);
     let data = await Score.find({
       "obtained.student": UId,
+      deleted: false,
     });
 
     const res = data.map((_) => ({
@@ -31,7 +33,7 @@ export const getScore = async (c: Context) => {
       obtained: _.obtained.find((__: any) => __.student == UId)?.score || 0,
     }));
 
-    return c.json({ Scores: res }, 200);
+    return c.json({ scores: res }, 200);
   } catch (error: any) {
     return c.text(`${error}`, 400);
   }
@@ -51,8 +53,8 @@ export const createScores = async (
     "obtained[]": obtainedArr,
   } = c.req.valid("form");
   const { id: userId } = c.get("jwtPayload");
-
   let data;
+  
   try {
     const User = await Users(db);
     const users = await User.find({ role: 0 });
@@ -83,8 +85,40 @@ export const createScores = async (
       },
     ]);
 
-    return c.json({ Score: data }, 200);
+    return c.json({}, 200);
   } catch (error: any) {
     return c.text(`${error}`, 400);
+  }
+};
+
+export const deleteScore = async (c: Context) => {
+  const id = c.req.param("id");
+  const { id: userId, role } = c.get("jwtPayload");
+  const db = c.req.query("db") || "3A";
+  let data;
+
+  try {
+    const Score = await Scores(db);
+    data = await Score.findOne({ _id: id, deleted: false });
+
+    if (!data) {
+      throw "Score not found";
+    }
+
+    if (data.createdBy != userId && role != 2) {
+      throw "You are not Authorised to perform this action";
+    }
+
+    data = await Score.findByIdAndUpdate(
+      id,
+      {
+        deleted: true,
+      },
+      { new: true }
+    );
+
+    return c.json({});
+  } catch (error: any) {
+    return c.text(error, 400);
   }
 };
