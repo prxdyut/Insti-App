@@ -47,7 +47,7 @@ import {
 } from "../../utils/icons";
 import { useNavigate } from "react-router-dom";
 import { authProvider } from "../../providers/auth";
- 
+
 import { Preferences } from "@capacitor/preferences";
 import { useUser } from "../../hooks/user";
 import { useLocalData } from "../../hooks/localData";
@@ -124,7 +124,6 @@ export default () => {
   ];
 
   const navigateTo = useNavigate();
-
   const drawerState = topBarStore((state) => state.isOpen);
   const openDrawer = topBarStore((state) => state.open);
   const closeDrawer = topBarStore((state) => state.close);
@@ -148,6 +147,7 @@ export default () => {
     subtitle: user?.role,
     media: "https://picsum.photos/900/1600",
   };
+
   return (
     <SwipeableDrawer
       anchor={"left"}
@@ -163,9 +163,8 @@ export default () => {
           flexFlow: "column",
         }}
       >
-        {/* <ProfileCard {...ProfileCardProps} />
-        <ClassSelector /> */}
-        <div className=" p-4 font-bold text-2xl">My App</div>
+        <ProfileCard {...ProfileCardProps} />
+        <ClassSelector />
         <div style={{ flex: 1, overflow: "scroll" }}>
           <List strongIos style={{ margin: 0 }}>
             {topContents.map((content, i) => (

@@ -28,6 +28,7 @@ export default function ClassSelector() {
         onChange={(_) =>
           setLocalData((__:any) => ({ ...__, class: _.target.value }))
         }
+        outline
       >
         {classes.map((class_) => (
           <option value={class_.value} key={class_.value}>

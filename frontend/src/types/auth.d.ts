@@ -8,6 +8,7 @@ type User = {
   };
   role: "admin" | "student" | "tutor";
   token: string;
+  access: string[]
 };
 
 type AuthProvider = {
