@@ -17,12 +17,15 @@ import transactions from "./routes/transactions";
 import { serve } from "bun";
 import attendance from "./routes/attendance";
 import scores from "./routes/scores";
-
+import attendance_arduino from "./attendance_arduino";
 import { format, startOfDay } from "date-fns";
 import { Users } from "./models/users";
 import { Attendances } from "./models/attendances";
-const app = new Hono().basePath("/api");
+import { appendTrailingSlash } from 'hono/trailing-slash'
 
+const app = new Hono({ strict: true }).basePath("/api");
+
+app.use(appendTrailingSlash());
 app.use("*", logger(), prettyJSON());
 
 app.use(
@@ -34,6 +37,7 @@ app.use(
 );
 
 
+app.route("/device", attendance_arduino);
 app.route("/assignments", assignments);
 app.route("/assignments", submissions);
 app.route("/attendance", attendance);

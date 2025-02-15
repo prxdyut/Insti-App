@@ -21,14 +21,18 @@ export default function TopBar() {
       <NavLeft>
         <Link onClick={openDrawer} iconIos="f7:menu" iconMd="material:menu" />
       </NavLeft>
-      <NavTitle sliding>
-        {ui.heading}
-      </NavTitle>
+      <NavTitle sliding>{ui.heading}</NavTitle>
       <NavRight>
         <Link
           searchbarEnable=".searchbar-components"
           iconIos="f7:search"
           iconMd="material:search"
+        />
+        <Link
+          iconMaterial="refresh"
+          onClick={() => {
+            location.reload();
+          }}
         />
       </NavRight>
       <Searchbar

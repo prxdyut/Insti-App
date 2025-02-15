@@ -54,15 +54,18 @@ export const getUser = async (c: Context) => {
 
 export const createUser = async (c: CustomContext<"form", createUserType>) => {
   const formData = c.req.valid("form");
-  const { first, last, role, phone, backup_email } = formData;
-
+  const { first, last, role, phone, backup_email, batch } = formData;
   try {
+    if (role == 0 && !batch) throw "Plz provide batch";
+
     let randomPassword = generateRandomPassword();
     let password = await hashPassword(randomPassword);
 
     const db = c.req.query("db") || "3A";
 
-    let mail_slug = ((first + last + randomNum(100)) as string).toLowerCase();
+    let mail_slug = ((first + last + randomNum(100)) as string)
+      .toLowerCase()
+      .replace(" ", "-");
     const main_email = (mail_slug + "@" + Bun.env.MAIL_DOMAIN) as string;
 
     const payload = {
@@ -109,12 +112,14 @@ export const createUser = async (c: CustomContext<"form", createUserType>) => {
         role,
         phone,
         email: { backup: backup_email, main: main_email },
+        batch,
       },
     ]);
 
     return c.json({
       user: data,
       token,
+      randomPassword,
     });
   } catch (error: any) {
     return c.text(`${error}`, 400);
@@ -299,6 +304,10 @@ export const loginUser = async (c: CustomContext<"form", LoginUserType>) => {
 
     return c.json({
       token,
+      userId: data._id,
+      firstName: data.name.first,
+      lastName: data.name.last,
+      role: data.role,
     });
   } catch (error: any) {
     return c.text(`${error}`, 400);

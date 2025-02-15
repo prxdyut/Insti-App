@@ -49,10 +49,10 @@ export default () => {
         <input type="hidden" name="redirectTo" value={from} />
         <List>
           <ListInput
-            label="Username"
+            label="Email"
             type="text"
-            name="username"
-            placeholder="Your username"
+            name="email"
+            placeholder="Your Email"
           />
           <ListInput
             label="Password"

@@ -1,4 +1,6 @@
 import { Collapse } from "@mui/material";
+import { Upload } from "@aws-sdk/lib-storage";
+import { S3Client, S3 } from "@aws-sdk/client-s3";
 import {
   Block,
   Button,
@@ -24,6 +26,7 @@ import { format } from "date-fns";
 import subjects from "../../utils/subjects";
 import { Form } from "react-router-dom";
 import { useLocalData } from "../../hooks/localData";
+import fetchBackend from "../../utils/fetchBackend";
 
 export default function FormBuilder({
   structure,
@@ -98,14 +101,16 @@ export default function FormBuilder({
         <input type="hidden" name="class" value={localData?.class} />
 
         {/* {_} edits needed {_} */}
-        {Boolean(structure.length) && <div className=" flex justify-end mx-4 gap-2">
-          <Button type="reset" className=" w-min" outline>
-            Reset
-          </Button>
-          <Button type="submit" className=" w-min" fill>
-            {submit}
-          </Button>
-        </div>}
+        {Boolean(structure.length) && (
+          <div className=" flex justify-end mx-4 gap-2">
+            <Button type="reset" className=" w-min" outline>
+              Reset
+            </Button>
+            <Button type="submit" className=" w-min" fill>
+              {submit}
+            </Button>
+          </div>
+        )}
       </Form>
     </div>
   );
@@ -157,7 +162,10 @@ function ButtonEditor(props: {
   linkLabel: string;
   linkValue?: string;
 }) {
-  const [button, setButton] = useState({ label: props.labelValue, url: props.linkValue });
+  const [button, setButton] = useState({
+    label: props.labelValue,
+    url: props.linkValue,
+  });
 
   return (
     <div className=" mx-4 my-3 border-2 rounded-lg buttonEditor">
@@ -208,10 +216,11 @@ function ButtonEditor(props: {
 function FilesUploader(props: {
   label: string;
   name?: string;
-  value?: FileRef[];
+  value?: string[];
   single?: boolean;
 }) {
-  const [attachments, setAttachments] = useState<FileRef[]>(props.value || []);
+  let defaultId = '';
+  const [attachments, setAttachments] = useState<string[]>(props.value || []);
 
   const isImageFile = (file: { type: string }) =>
     file?.type?.startsWith("image/") ||
@@ -246,36 +255,53 @@ function FilesUploader(props: {
 
     fileInput.addEventListener("change", async (event: any) => {
       const files = Array.from(event.target.files) as File[];
-      const filesArray: FileRef[] = [];
+      const filesArray: string[] = [];
       const dialog = f7.dialog.progress("Uploading Files", 0);
 
       for (const [index, file] of files.entries()) {
         try {
-          const fileName = "" + Math.round(Math.random() * 10000000);
-          const fileTitle = "" + Math.round(Math.random() * 10000000);
+          const fileName = file.name + "" + Math.round(Math.random() * 100000);
 
           dialog.setText(`File ${index + 1} of ${files.length}`);
-          const previewUrl = isImageFile(file)
-            ? await readFileAsDataURL(file)
-            : "/preview exampul";
+          dialog.setProgress(0);
 
-          await new Promise((resolve) => {
-            let progress = 0;
-            const interval = setInterval(() => {
-              progress += 10;
-              dialog.setProgress(progress);
-              if (progress === 100) clearInterval(interval);
-            }, 100);
-            setTimeout(resolve, 1000);
-          });
+          const previewUrl = "/preview exampul";
+          try {
+            const parallelUploads3 = new Upload({
+              client: new S3({
+                region: "eu-north-1",
+                credentials: {
+                  accessKeyId: "AKIAQ3EGVPZF2VVY2BN4",
+                  secretAccessKey: "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",
+                },
+              }),
+              params: { Bucket: "institute-testing", Key: fileName, Body: file },
+              queueSize: 4,
+              partSize: 1024 * 1024 * 5,
+              leavePartsOnError: false,
+            });
+            parallelUploads3.on("httpUploadProgress", (progress) => {
+              // @ts-ignore
+              const percentage = (progress?.loaded / progress?.total) * 100;
+              dialog.setProgress(percentage);
+            });
 
-          filesArray.push({
-            _id: `FI${Math.round(Math.random() * 10000)}`,
-            url: previewUrl as string,
-            size: formatFileSize(file.size),
-            type: file.type,
-            name: file.name,
-          });
+            await parallelUploads3.done().then(console.log);
+          } catch (e) {
+            console.log(e);
+            f7.dialog.alert("Could not upload file.");
+          }
+
+          const body = new FormData();
+          body.append("name", fileName);
+          body.append("url", "https");
+          body.append("size", "35675686654");
+          body.append("type", "application/pdf");
+          body.append("s3Bucket", "data-ocean");
+          body.append("s3Key", "refdsvcrtgfbdsvcx");
+          const data = await fetchBackend("/files", "POST", body);
+
+          filesArray.push(`FI${Math.round(Math.random() * 10000)}`);
         } catch (error) {
           console.error("Error reading file:", file.name, error);
         }

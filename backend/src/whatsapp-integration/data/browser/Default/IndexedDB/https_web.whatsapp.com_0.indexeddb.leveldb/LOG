@@ -1,0 +1,35 @@
+2024/07/21-07:08:19.685 bced8 Reusing MANIFEST /home/safalya-classes/whatsapp-integration/data/browser/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/07/21-07:08:19.685 bced8 Recovering log #153
+2024/07/21-07:08:19.695 bced8 Reusing old log /home/safalya-classes/whatsapp-integration/data/browser/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000153.log 
+2024/07/21-07:08:21.104 bcedc Level-0 table #161: started
+2024/07/21-07:08:21.112 bcedc Level-0 table #161: 193163 bytes OK
+2024/07/21-07:08:21.117 bcedc Delete type=0 #153
+2024/07/21-07:08:21.118 bced8 Manual compaction at level-0 from '\x00$\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00%\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/07/21-07:08:22.926 bced9 Compacting 1@1 + 4@2 files
+2024/07/21-07:08:22.990 bced9 Generated table #162@1: 48490 keys, 2206102 bytes
+2024/07/21-07:08:23.049 bced9 Generated table #163@1: 22493 keys, 2187667 bytes
+2024/07/21-07:08:23.100 bced9 Generated table #164@1: 49612 keys, 2229633 bytes
+2024/07/21-07:08:23.123 bced9 Generated table #165@1: 25262 keys, 515398 bytes
+2024/07/21-07:08:23.123 bced9 Compacted 1@1 + 4@2 files => 7138800 bytes
+2024/07/21-07:08:23.126 bced9 compacted to: files[ 0 0 4 0 0 0 0 ]
+2024/07/21-07:08:23.127 bced9 Delete type=2 #158
+2024/07/21-07:08:23.127 bced9 Delete type=2 #157
+2024/07/21-07:08:23.127 bced9 Delete type=2 #155
+2024/07/21-07:08:23.127 bced9 Delete type=2 #156
+2024/07/21-07:08:23.127 bced9 Delete type=2 #161
+2024/07/21-07:08:42.356 bced8 Level-0 table #167: started
+2024/07/21-07:08:42.362 bced8 Level-0 table #167: 158254 bytes OK
+2024/07/21-07:08:42.365 bced8 Delete type=0 #160
+2024/07/21-07:08:42.365 bced8 Manual compaction at level-0 from '\x00%\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00&\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/07/21-07:08:44.246 bced9 Compacting 1@1 + 4@2 files
+2024/07/21-07:08:44.309 bced9 Generated table #168@1: 49063 keys, 2207445 bytes
+2024/07/21-07:08:44.357 bced9 Generated table #169@1: 22639 keys, 2189690 bytes
+2024/07/21-07:08:44.415 bced9 Generated table #170@1: 48908 keys, 2228280 bytes
+2024/07/21-07:08:44.438 bced9 Generated table #171@1: 25983 keys, 529843 bytes
+2024/07/21-07:08:44.438 bced9 Compacted 1@1 + 4@2 files => 7155258 bytes
+2024/07/21-07:08:44.443 bced9 compacted to: files[ 0 0 4 0 0 0 0 ]
+2024/07/21-07:08:44.444 bced9 Delete type=2 #167
+2024/07/21-07:08:44.444 bced9 Delete type=2 #162
+2024/07/21-07:08:44.444 bced9 Delete type=2 #164
+2024/07/21-07:08:44.444 bced9 Delete type=2 #163
+2024/07/21-07:08:44.444 bced9 Delete type=2 #165

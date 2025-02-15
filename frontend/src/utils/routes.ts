@@ -16,7 +16,7 @@ const SUBMISSION_ROUTES = createRoutes([
     Component: components.AssignmentSubmit,
     loader: loaders.assignmentSubmitLoader,
     action: actions.assignmentSubmitAction,
-    access: ["student", "tutor", "admin"],
+    access: [0, 1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -28,7 +28,7 @@ const SUBMISSION_ROUTES = createRoutes([
     Component: components.AssignmentSubmission,
     loader: loaders.assignmentSubmissionLoader,
     action: actions.assignmentSubmissionAction,
-    access: ["tutor", "admin"],
+    access: [1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -42,7 +42,7 @@ const ASSIGNMENT_ROUTES = createRoutes([
     path: `/${slugs.ASSIGNMENT_SLUG}`,
     Component: components.AssignmentsHomepage,
     loader: loaders.assignmentsHomeLoader,
-    access: ["student", "tutor", "admin"],
+    access: [0, 1, 2],
     ui: {
       backBar: false,
       topBar: true,
@@ -54,7 +54,7 @@ const ASSIGNMENT_ROUTES = createRoutes([
     Component: components.AssignmentNew,
     loader: loaders.assignmentsNewLoader,
     action: actions.assignmentNewAction,
-    access: ["tutor", "admin"],
+    access: [1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -65,7 +65,7 @@ const ASSIGNMENT_ROUTES = createRoutes([
     path: `/${slugs.ASSIGNMENT_SLUG}/:id`,
     Component: components.AssignmentsSingle,
     loader: loaders.assignmentSingleLoader,
-    access: ["student", "tutor", "admin"],
+    access: [0, 1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -77,7 +77,7 @@ const ASSIGNMENT_ROUTES = createRoutes([
     Component: components.AssignmentEdit,
     loader: loaders.assignmentEditLoader,
     action: actions.assignmentEditAction,
-    access: ["tutor", "admin"],
+    access: [1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -91,7 +91,7 @@ const ALERT_ROUTES = createRoutes([
     path: `/${slugs.ALERT_SLUG}`,
     Component: components.AlertsHome,
     loader: loaders.alertsHomeLoader,
-    access: ["student", "tutor", "admin"],
+    access: [0, 1, 2],
     ui: {
       backBar: false,
       topBar: true,
@@ -103,7 +103,7 @@ const ALERT_ROUTES = createRoutes([
     Component: components.AlertNew,
     loader: loaders.alertNewLoader,
     action: actions.alertNewAction,
-    access: ["tutor", "admin"],
+    access: [1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -114,7 +114,7 @@ const ALERT_ROUTES = createRoutes([
     path: `/${slugs.ALERT_SLUG}/:id`,
     Component: components.AlertsSingle,
     loader: loaders.alertsSingleLoader,
-    access: ["student", "tutor", "admin"],
+    access: [0, 1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -126,7 +126,7 @@ const ALERT_ROUTES = createRoutes([
     Component: components.AlertEdit,
     loader: loaders.alertsEditLoader,
     action: actions.alertEditAction,
-    access: ["student", "tutor", "admin"],
+    access: [0, 1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -140,7 +140,7 @@ const SCHEDULE_ROUTES = createRoutes([
     path: `/${slugs.SCHEDULE_SLUG}`,
     Component: components.ScheduleHome,
     loader: loaders.scheduleHome,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: false,
       topBar: true,
@@ -152,7 +152,7 @@ const SCHEDULE_ROUTES = createRoutes([
     Component: components.ScheduleEdit,
     loader: loaders.scheduleEditLoader,
     action: actions.scheduleEditAction,
-    access: ["tutor", "admin"],
+    access: [1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -164,7 +164,7 @@ const SCHEDULE_ROUTES = createRoutes([
     Component: components.ScheduleNew,
     loader: loaders.scheduleNewLoader,
     action: actions.scheduleNewAction,
-    access: ["tutor", "admin"],
+    access: [1, 2],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -178,7 +178,7 @@ const SCORES_ROUTES = createRoutes([
     path: `/${slugs.SCORES_SLUG}`,
     Component: components.ScoresHome,
     loader: loaders.scoresHomeLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: false,
       topBar: true,
@@ -190,7 +190,7 @@ const SCORES_ROUTES = createRoutes([
     Component: components.ScoresNew,
     loader: loaders.scoresNewLoader,
     action: actions.scoresNewAction,
-    access: ["admin", "tutor"],
+    access: [2, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -201,7 +201,7 @@ const SCORES_ROUTES = createRoutes([
     path: `/${slugs.SCORES_SLUG}/:id`,
     Component: components.ScoreSingle,
     loader: loaders.ScoresSingleLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -213,7 +213,7 @@ const SCORES_ROUTES = createRoutes([
     Component: components.ScoresEdit,
     action: actions.scoresEditAction,
     loader: loaders.scoresEditLoader,
-    access: ["admin", "tutor"],
+    access: [2, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -227,7 +227,7 @@ const DOUBTS_ROUTES = createRoutes([
     path: `/${slugs.DOUBTS_SLUG}`,
     Component: components.DoubtsHome,
     loader: loaders.doubtsHomeLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: false,
       topBar: true,
@@ -239,14 +239,14 @@ const DOUBTS_ROUTES = createRoutes([
     Component: components.DoubtsNew,
     action: actions.doubtNewAction,
     loader: loaders.doubtsNewLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
   },
   {
     path: `/${slugs.DOUBTS_SLUG}/:id`,
     Component: components.DoubtsSingle,
     loader: loaders.doubtsSingleLoader,
     action: actions.doubtReplyAction,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -260,7 +260,7 @@ const ATTENDANCE_ROUTES = createRoutes([
     path: `/${slugs.ATTENDANCE_SLUG}`,
     Component: components.AttendanceHome,
     loader: loaders.attendancesHomeLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: false,
       topBar: true,
@@ -272,7 +272,7 @@ const ATTENDANCE_ROUTES = createRoutes([
     Component: components.AttendanceNew,
     loader: loaders.attendancesNewLoader,
     action: actions.attendanceNewAction,
-    access: ["student", "tutor"],
+    access: [0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -286,7 +286,7 @@ const ACCOUNT_ROUTES = createRoutes([
     path: `/${slugs.ACCOUNT_SLUG}`,
     Component: components.ProfileArea,
     loader: loaders.profileHomeLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -298,7 +298,7 @@ const ACCOUNT_ROUTES = createRoutes([
     Component: components.ProfileEdit,
     loader: loaders.profileEditLoader,
     action: actions.profileEditAction,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -310,7 +310,7 @@ const ACCOUNT_ROUTES = createRoutes([
     Component: components.ProfileNew,
     loader: loaders.profileNewLoader,
     action: actions.profileNewAction,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -324,7 +324,7 @@ const OTHER_ROUTES = createRoutes([
     path: `/${slugs.SETTINGS_SLUG}`,
     Component: components.SettingsArea,
     loader: loaders.authLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -335,7 +335,7 @@ const OTHER_ROUTES = createRoutes([
     path: `/${slugs.REPORT_SLUG}`,
     Component: components.ReportForm,
     loader: loaders.authLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -349,26 +349,26 @@ const AUTHENTICATION_ROUTES = createRoutes([
     path: `/${slugs.LOGIN_SLUG}`,
     action: actions.loginAction,
     Component: components.LoginPage,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: false,
   },
   {
     path: `/${slugs.RESET_SLUG}`,
     Component: null,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: false,
   },
   {
     path: `/${slugs.RESET_SLUG}/new`,
     Component: null,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: false,
   },
   {
     path: `signout`,
     loader: loaders.signoutLoader,
     Component: null,
-    access: ["admin", "tutor", "student"],
+    access: [2, 1, 0],
   },
 ]);
 
@@ -377,7 +377,7 @@ const PERFORMANCE_ROUTES = createRoutes([
     path: `/${slugs.PERFORMANCE_SLUG}`,
     Component: components.ChartsPerformance,
     loader: loaders.performanceHome,
-    access: ["student", "tutor", "admin"],
+    access: [0, 1, 2],
     ui: {
       heading: "Performance",
     },
@@ -389,7 +389,7 @@ const RESOURCES_ROUTES = createRoutes([
     path: `/${slugs.RESOURCES_SLUG}`,
     Component: components.ResourcesList,
     loader: loaders.resourcesHomeLoader,
-    access: ["admin", "student", "tutor"],
+    access: [2, 0, 1],
     ui: {
       heading: "Resources",
     },
@@ -399,7 +399,7 @@ const RESOURCES_ROUTES = createRoutes([
     Component: components.ResourceNew,
     loader: loaders.resourcesNewLoader,
     action: actions.resourceNewAction,
-    access: ["admin", "tutor"],
+    access: [2, 1],
     ui: {
       backBar: true,
       bottomBar: false,
@@ -411,7 +411,7 @@ const RESOURCES_ROUTES = createRoutes([
     Component: components.ResourceEdit,
     loader: loaders.resourceEditLoader,
     action: actions.resourceEditAction,
-    access: ["admin", "tutor"],
+    access: [2, 1],
     ui: {
       backBar: true,
       bottomBar: false,

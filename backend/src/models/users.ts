@@ -20,7 +20,7 @@ const schema = new Schema({
   },
   restrict: { type: Boolean, required: true, default: false },
   meta: { type: Object },
-  batch: { type: String, required: true },
+  batch: { type: String },
   fee: {
     total: { type: Number },
     deduction: { type: Number },

@@ -11,13 +11,13 @@ export async function loginAction(
 ): Promise<FormActionData> {
   const request = args.request;
   let formData = await request.formData();
-  let username = formData.get("username") as string | null;
+  let email = formData.get("email") as string | null;
   let password = formData.get("password") as string | null;
   let redirectTo = formData.get("redirectTo") as string | null;
 
-  if (!username) {
+  if (!email) {
     return {
-      error: "You must provide a username",
+      error: "You must provide a email",
     };
   }
 
@@ -28,7 +28,7 @@ export async function loginAction(
   }
 
   try {
-    await authProvider.signin(username, password);
+    await authProvider.signin(email, password);
   } catch (error) {
     return {
       error: error as string,

@@ -9,17 +9,19 @@ import {
   redirect,
 } from "react-router-dom";
 import { allRoutes } from "../utils/routes";
+import fetchBackend from "../utils/fetchBackend";
 
 export const authProvider: AuthProvider = {
   initial: true,
   isAuthenticated: false,
   user: {},
-  async signin(userId: string, password: string) {
-    await wait(2000, null);
-    const user = await checkUserAndAssignToken({
-      userId,
-      password,
-    });
+  async signin(email: string, password: string) {
+    const formData = new FormData();
+    formData.set("email", email);
+    formData.set("unencryptedPassword", password);
+
+    const user = await fetchBackend("/users/login", "POST", formData, true);
+
     if (user.userId) {
       authProvider.isAuthenticated = true;
       authProvider.user = user;
@@ -45,11 +47,8 @@ export const authProvider: AuthProvider = {
     if (authProvider.initial) {
       const { value: userStr } = await Preferences.get({ key: "user" });
       const user = JSON.parse(userStr as string);
-      const isVerifiedToken = await verifyToken(user);
-      if (isVerifiedToken) {
-        authProvider.user = user;
-        authProvider.isAuthenticated = true;
-      }
+      authProvider.user = user;
+      authProvider.isAuthenticated = true;
       authProvider.initial = false;
     }
   },

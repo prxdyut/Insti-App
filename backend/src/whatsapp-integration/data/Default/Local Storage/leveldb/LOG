@@ -1,0 +1,6 @@
+2024/07/21-12:15:58.148 45 Reusing MANIFEST /app/data/Default/Local Storage/leveldb/MANIFEST-000001
+2024/07/21-12:15:58.157 45 Recovering log #4
+2024/07/21-12:15:58.159 45 Reusing old log /app/data/Default/Local Storage/leveldb/000004.log 
+2024/07/21-12:18:58.586 45 Level-0 table #8: started
+2024/07/21-12:18:58.591 45 Level-0 table #8: 19238 bytes OK
+2024/07/21-12:18:58.595 45 Delete type=0 #4

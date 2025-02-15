@@ -1,0 +1,51 @@
+2024/07/21-06:57:13.631 bacad Reusing MANIFEST /home/pradyut-das/messaging/data/browser/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/07/21-06:57:13.632 bacad Recovering log #134
+2024/07/21-06:57:13.638 bacad Reusing old log /home/pradyut-das/messaging/data/browser/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000134.log 
+2024/07/21-06:57:15.576 bacae Level-0 table #142: started
+2024/07/21-06:57:15.585 bacae Level-0 table #142: 157327 bytes OK
+2024/07/21-06:57:15.588 bacae Delete type=0 #134
+2024/07/21-06:57:15.588 bacae Manual compaction at level-0 from '\x00!\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00"\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/07/21-06:57:17.439 bacae Compacting 1@1 + 4@2 files
+2024/07/21-06:57:17.499 bacae Generated table #143@1: 47065 keys, 2205023 bytes
+2024/07/21-06:57:17.555 bacae Generated table #144@1: 22002 keys, 2188493 bytes
+2024/07/21-06:57:17.610 bacae Generated table #145@1: 52161 keys, 2229944 bytes
+2024/07/21-06:57:17.627 bacae Generated table #146@1: 22562 keys, 460571 bytes
+2024/07/21-06:57:17.628 bacae Compacted 1@1 + 4@2 files => 7084031 bytes
+2024/07/21-06:57:17.629 bacae compacted to: files[ 0 0 4 0 0 0 0 ]
+2024/07/21-06:57:17.630 bacae Delete type=2 #138
+2024/07/21-06:57:17.630 bacae Delete type=2 #136
+2024/07/21-06:57:17.630 bacae Delete type=2 #139
+2024/07/21-06:57:17.630 bacae Delete type=2 #142
+2024/07/21-06:57:17.630 bacae Delete type=2 #137
+2024/07/21-06:58:12.678 bacb1 Level-0 table #148: started
+2024/07/21-06:58:12.684 bacb1 Level-0 table #148: 127817 bytes OK
+2024/07/21-06:58:12.688 bacb1 Delete type=0 #141
+2024/07/21-06:58:12.689 bacad Manual compaction at level-0 from '\x00"\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00#\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/07/21-06:58:14.474 bacae Compacting 1@1 + 4@2 files
+2024/07/21-06:58:14.526 bacae Generated table #149@1: 47459 keys, 2205899 bytes
+2024/07/21-06:58:14.572 bacae Generated table #150@1: 22140 keys, 2187793 bytes
+2024/07/21-06:58:14.624 bacae Generated table #151@1: 51443 keys, 2231539 bytes
+2024/07/21-06:58:14.642 bacae Generated table #152@1: 23304 keys, 475353 bytes
+2024/07/21-06:58:14.642 bacae Compacted 1@1 + 4@2 files => 7100584 bytes
+2024/07/21-06:58:14.644 bacae compacted to: files[ 0 0 4 0 0 0 0 ]
+2024/07/21-06:58:14.644 bacae Delete type=2 #144
+2024/07/21-06:58:14.644 bacae Delete type=2 #145
+2024/07/21-06:58:14.645 bacae Delete type=2 #143
+2024/07/21-06:58:14.645 bacae Delete type=2 #148
+2024/07/21-06:58:14.645 bacae Delete type=2 #146
+2024/07/21-06:58:33.166 bacad Level-0 table #154: started
+2024/07/21-06:58:33.172 bacad Level-0 table #154: 161864 bytes OK
+2024/07/21-06:58:33.177 bacad Delete type=0 #147
+2024/07/21-06:58:33.177 bacad Manual compaction at level-0 from '\x00#\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00$\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/07/21-06:58:35.087 bacae Compacting 1@1 + 4@2 files
+2024/07/21-06:58:35.153 bacae Generated table #155@1: 47897 keys, 2205527 bytes
+2024/07/21-06:58:35.200 bacae Generated table #156@1: 22320 keys, 2188020 bytes
+2024/07/21-06:58:35.263 bacae Generated table #157@1: 50466 keys, 2228908 bytes
+2024/07/21-06:58:35.282 bacae Generated table #158@1: 24343 keys, 496105 bytes
+2024/07/21-06:58:35.282 bacae Compacted 1@1 + 4@2 files => 7118560 bytes
+2024/07/21-06:58:35.286 bacae compacted to: files[ 0 0 4 0 0 0 0 ]
+2024/07/21-06:58:35.287 bacae Delete type=2 #154
+2024/07/21-06:58:35.287 bacae Delete type=2 #150
+2024/07/21-06:58:35.287 bacae Delete type=2 #151
+2024/07/21-06:58:35.287 bacae Delete type=2 #149
+2024/07/21-06:58:35.287 bacae Delete type=2 #152

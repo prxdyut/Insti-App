@@ -35,6 +35,7 @@ export default function AlertNew() {
           },
           {
             type: "files",
+            name: "files",
             label: "Upload Files",
           },
           {

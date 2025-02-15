@@ -3,6 +3,7 @@ import { z } from "zod";
 export const validateCreateUser = z.object({
   first: z.string(),
   last: z.string(),
+  batch: z.string().optional(),
   // unencryptedPassword: z.string(),
   role: z.coerce.number().min(0).max(2),
   phone: z.string(),
@@ -27,8 +28,10 @@ export const validateResetPassword = z.object({
 export type resetPasswordType = z.infer<typeof validateResetPassword>;
 
 export const validateLoginUser = z.object({
-  email: z.string().email(),
-  unencryptedPassword: z.string(),
+  email: z
+    .string({ message: "Please Provide a Email" })
+    .email("Please provide valid email"),
+  unencryptedPassword: z.string({ message: "Please Provide a Password" }),
 });
 export type LoginUserType = z.infer<typeof validateLoginUser>;
 
